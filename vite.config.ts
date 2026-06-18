@@ -9,11 +9,11 @@ export default defineConfig({
       registerType: "autoUpdate",
       includeAssets: ["favicon.ico", "apple-touch-icon.png"],
       manifest: {
-        name: "영어 클립 학습",
-        short_name: "클립학습",
+        name: "햄글리시",
+        short_name: "햄글리시",
         description: "캐릭터 무대에서 랜덤 예문을 유튜브 클립으로 익히는 앱",
-        theme_color: "#0f172a",
-        background_color: "#0f172a",
+        theme_color: "#0ea5e9",
+        background_color: "#0ea5e9",
         display: "standalone",
         start_url: "/",
         icons: [

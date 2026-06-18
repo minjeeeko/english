@@ -6,13 +6,8 @@ const FLOAT_EMOJIS = ["💗","💕","✨","⭐","🌟","💫","🩷","💖","�
 const IDLE_IMGS = ["/ham1.png","/ham2.png","/ham3.png","/ham4.png","/ham5.png","/ham6.png"];
 
 export function Mascot({ petted = false, onClick }: Props) {
-  const [idleImg, setIdleImg] = useState("/ham1.png");
+  const [idleImg] = useState(() => IDLE_IMGS[Math.floor(Math.random() * IDLE_IMGS.length)]);
   const [pettedImg, setPettedImg] = useState("/ham4.png");
-
-  /* 앱 시작 시 idle 이미지 랜덤 선택 */
-  useEffect(() => {
-    setIdleImg(IDLE_IMGS[Math.floor(Math.random() * IDLE_IMGS.length)]);
-  }, []);
 
   /* 쓰다듬을 때마다 다른 이미지 */
   useEffect(() => {

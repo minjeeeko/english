@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Mascot } from "./components/Mascot";
 import { pickPhrase } from "./lib/entries";
 import type { Entry } from "./lib/entries";
+import { requestNotificationPermission, scheduleNotifications } from "./lib/notifications";
 
 const CHEERS = [
   "영어 공부를 하다니 대단한데?! 🌟",
@@ -34,6 +35,9 @@ export default function App() {
 
   useEffect(() => {
     fetchPhrase();
+    requestNotificationPermission().then((granted) => {
+      if (granted) scheduleNotifications();
+    });
   }, [fetchPhrase]);
 
   const handlePet = () => {
@@ -55,53 +59,53 @@ export default function App() {
       <div className="absolute top-0 left-1/4 w-80 h-80 bg-sky-50 rounded-full blur-3xl opacity-70 pointer-events-none" />
       <div className="absolute bottom-10 right-1/4 w-64 h-64 bg-orange-50 rounded-full blur-3xl opacity-50 pointer-events-none" />
 
-      <div className="relative z-10 flex flex-col items-center gap-4 px-4 w-full max-w-sm -mt-28">
+      <div className="relative z-10 flex flex-col items-center px-4 w-full max-w-sm -mt-12">
         {/* Speech bubble */}
-        {!loading ? (
-          <div key={bubbleKey} className="animate-fadeSlideIn w-full">
-            {cheerMsg ? (
-              /* Cheer bubble — white bg */
-              <div className="relative bg-white text-stone-800 rounded-2xl p-4 shadow-md border border-sky-100 text-center">
-                <p className="text-base font-semibold">{cheerMsg}</p>
-                <BubbleTail color="white" />
-              </div>
-            ) : entry ? (
-              /* Phrase bubble */
-              <div
-                className="relative bg-white text-stone-800 rounded-2xl p-4 shadow-md border border-sky-100 cursor-pointer active:scale-[0.98] transition-transform animate-pulse-ring"
-                onClick={() => navigate(`/study/${entry.id}`)}
-              >
-                <p className="text-lg font-bold leading-snug mb-1">{entry.phrase}</p>
-                {entry.translation && (
-                  <p className="text-sm text-stone-500">{entry.translation}</p>
-                )}
-                <BubbleTail color="white" />
-              </div>
-            ) : (
-              /* Empty state */
-              <div className="relative bg-white text-stone-800 rounded-2xl p-4 shadow-md border border-sky-100 text-center">
-                <p className="text-base font-medium text-stone-500">아직 추가된 구문이 없어요</p>
-                <p className="text-sm text-sky-400 mt-1">우측 하단 + 버튼으로 추가해보세요!</p>
-                <BubbleTail color="white" />
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="h-24" />
-        )}
+        <div className="w-full mb-2">
+          {!loading ? (
+            <div key={bubbleKey} className="animate-fadeSlideIn w-full">
+              {cheerMsg ? (
+                <div className="relative bg-white text-stone-800 rounded-2xl p-4 shadow-md border border-sky-100 text-center">
+                  <p className="text-base font-semibold">{cheerMsg}</p>
+                  <BubbleTail color="white" />
+                </div>
+              ) : entry ? (
+                <div
+                  className="relative bg-white text-stone-800 rounded-2xl p-4 shadow-md border border-sky-100 cursor-pointer active:scale-[0.98] transition-transform animate-pulse-ring"
+                  onClick={() => navigate(`/study/${entry.id}`, { state: { entry } })}
+                >
+                  <p className="text-lg font-bold leading-snug mb-1">{entry.phrase}</p>
+                  {entry.translation && (
+                    <p className="text-sm text-stone-500">{entry.translation}</p>
+                  )}
+                  <BubbleTail color="white" />
+                </div>
+              ) : (
+                <div className="relative bg-white text-stone-800 rounded-2xl p-4 shadow-md border border-sky-100 text-center">
+                  <p className="text-base font-medium text-stone-500">아직 추가된 구문이 없어요</p>
+                  <p className="text-sm text-sky-400 mt-1">우측 하단 + 버튼으로 추가해보세요!</p>
+                  <BubbleTail color="white" />
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="h-24" />
+          )}
+        </div>
 
-        {/* Mascot */}
-        <Mascot petted={petted} onClick={handlePet} />
+        {/* Mascot + button pushed lower */}
+        <div className="flex flex-col items-center gap-3 mt-6">
+          <Mascot petted={petted} onClick={handlePet} />
 
-        {/* Next phrase button */}
-        {!loading && !cheerMsg && (
-          <button
-            onClick={fetchPhrase}
-            className="mt-1 text-sm text-sky-500 hover:text-sky-700 transition-colors border border-sky-200 rounded-full px-4 py-1.5 bg-white shadow-sm active:scale-95"
-          >
-            다른 예문 보기
-          </button>
-        )}
+          {!loading && !cheerMsg && (
+            <button
+              onClick={fetchPhrase}
+              className="text-sm text-sky-500 hover:text-sky-700 transition-colors border border-sky-200 rounded-full px-4 py-1.5 bg-white shadow-sm active:scale-95"
+            >
+              다른 예문 보기
+            </button>
+          )}
+        </div>
       </div>
 
       {/* FAB */}

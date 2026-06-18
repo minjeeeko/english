@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import { getEntry, gradeEntry, updateEntry, pickPhrase } from "../lib/entries";
 import type { Entry } from "../lib/entries";
@@ -9,13 +9,14 @@ import { parseYoutube } from "../lib/youtube";
 export default function StudyPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [entry, setEntry] = useState<Entry | null>(null);
+  const location = useLocation();
+  const [entry, setEntry] = useState<Entry | null>((location.state as { entry?: Entry })?.entry ?? null);
   const [graded, setGraded] = useState(false);
 
   useEffect(() => {
     if (!id) return;
-    getEntry(id).then(setEntry);
     setGraded(false);
+    getEntry(id).then(setEntry);
   }, [id]);
 
   const handleGrade = async (ok: boolean) => {
