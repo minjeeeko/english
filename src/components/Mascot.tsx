@@ -30,7 +30,7 @@ export function Mascot({ petted = false, onClick }: Props) {
       <img
         src={petted ? pettedImg : idleImg}
         alt="mascot"
-        className={`w-44 h-44 object-contain ${petted ? "" : "animate-float"}`}
+        className="w-44 h-44 object-contain"
         draggable={false}
       />
 
