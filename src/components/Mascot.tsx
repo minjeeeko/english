@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 type Props = { petted?: boolean; onClick?: () => void };
 
 const FLOAT_EMOJIS = ["💗","💕","✨","⭐","🌟","💫","🩷","💖","🎀","🌸"];
-const IDLE_IMGS = ["/ham1.png","/ham2.png","/ham3.png","/ham4.png","/ham5.png","/ham6.png"];
+const IDLE_IMGS = ["/ham1.png","/ham2.png","/ham3.png","/ham4.png","/ham5.png"];
 
 export function Mascot({ petted = false, onClick }: Props) {
   const [idleImg] = useState(() => IDLE_IMGS[Math.floor(Math.random() * IDLE_IMGS.length)]);
@@ -24,9 +24,10 @@ export function Mascot({ petted = false, onClick }: Props) {
     >
       <img
         src={petted ? pettedImg : idleImg}
-        alt="mascot"
+        alt=""
         className="w-44 h-44 object-contain"
         draggable={false}
+        onError={(e) => { (e.target as HTMLImageElement).src = "/ham1.png"; }}
       />
 
       {petted && (
