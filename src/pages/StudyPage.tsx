@@ -73,6 +73,13 @@ export default function StudyPage() {
             )}
           </div>
 
+          {/* Explanation */}
+          {entry.explanation && (
+            <div className="bg-white rounded-xl p-4 shadow-sm border border-stone-100 prose prose-stone prose-sm max-w-none">
+              <ReactMarkdown>{entry.explanation}</ReactMarkdown>
+            </div>
+          )}
+
           {/* Example sentence */}
           {(entry.example || entry.example_translation) && (
             <div className="bg-sky-50 rounded-xl p-4 border border-sky-100">
@@ -83,13 +90,6 @@ export default function StudyPage() {
               {entry.example_translation && (
                 <p className="text-stone-500 text-sm mt-1">{entry.example_translation}</p>
               )}
-            </div>
-          )}
-
-          {/* Explanation */}
-          {entry.explanation && (
-            <div className="bg-white rounded-xl p-4 shadow-sm border border-stone-100 prose prose-stone prose-sm max-w-none">
-              <ReactMarkdown>{entry.explanation}</ReactMarkdown>
             </div>
           )}
         </div>
