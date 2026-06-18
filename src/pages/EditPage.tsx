@@ -71,7 +71,7 @@ export default function EditPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f0f9ff] text-stone-800 pb-10">
+    <div className="min-h-screen bg-white text-stone-800 pb-10">
       <div className="max-w-lg mx-auto px-4 pt-4">
         <button onClick={() => navigate(-1)} className="mb-4 text-sm text-sky-500 hover:text-sky-700">
           ← 돌아가기

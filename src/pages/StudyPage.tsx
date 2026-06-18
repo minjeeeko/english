@@ -33,7 +33,7 @@ export default function StudyPage() {
 
   if (!entry) {
     return (
-      <div className="min-h-screen bg-[#f0f9ff] flex items-center justify-center text-stone-400">
+      <div className="min-h-screen bg-white flex items-center justify-center text-stone-400">
         불러오는 중...
       </div>
     );
@@ -42,7 +42,7 @@ export default function StudyPage() {
   const ytData = entry.youtube_url ? parseYoutube(entry.youtube_url) : null;
 
   return (
-    <div className="min-h-screen bg-[#f0f9ff] text-stone-800 pb-8">
+    <div className="min-h-screen bg-white text-stone-800 pb-8">
       <div className="max-w-lg mx-auto px-4 pt-4">
         <button
           onClick={() => navigate("/")}
