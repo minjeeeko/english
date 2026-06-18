@@ -9,6 +9,8 @@ export default function EditPage() {
   const navigate = useNavigate();
   const [phrase, setPhrase] = useState("");
   const [translation, setTranslation] = useState("");
+  const [example, setExample] = useState("");
+  const [exampleTranslation, setExampleTranslation] = useState("");
   const [explanation, setExplanation] = useState("");
   const [youtubeUrl, setYoutubeUrl] = useState("");
   const [startSec, setStartSec] = useState("");
@@ -23,6 +25,8 @@ export default function EditPage() {
       if (!e) return;
       setPhrase(e.phrase);
       setTranslation(e.translation ?? "");
+      setExample(e.example ?? "");
+      setExampleTranslation(e.example_translation ?? "");
       setExplanation(e.explanation ?? "");
       setYoutubeUrl(e.youtube_url ?? "");
       setStartSec(e.start_seconds != null ? String(e.start_seconds) : "");
@@ -45,6 +49,8 @@ export default function EditPage() {
       await updateEntry(id, {
         phrase: phrase.trim(),
         translation: translation.trim() || null,
+        example: example.trim() || null,
+        example_translation: exampleTranslation.trim() || null,
         explanation: explanation.trim() || null,
         youtube_url: youtubeUrl.trim() || null,
         start_seconds: startSec ? parseInt(startSec, 10) : null,
@@ -65,9 +71,9 @@ export default function EditPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#faf9f7] text-stone-800 pb-10">
+    <div className="min-h-screen bg-[#f0f9ff] text-stone-800 pb-10">
       <div className="max-w-lg mx-auto px-4 pt-4">
-        <button onClick={() => navigate(-1)} className="mb-4 text-sm text-indigo-400 hover:text-indigo-600">
+        <button onClick={() => navigate(-1)} className="mb-4 text-sm text-sky-500 hover:text-sky-700">
           ← 돌아가기
         </button>
         <h1 className="text-xl font-bold mb-5 text-stone-900">구문 편집</h1>
@@ -76,11 +82,22 @@ export default function EditPage() {
           <Field label="영어 구문 *">
             <input className="input-base" value={phrase} onChange={(e) => setPhrase(e.target.value)} />
           </Field>
-          <Field label="해석">
+          <Field label="구문 해석">
             <input className="input-base" value={translation} onChange={(e) => setTranslation(e.target.value)} />
           </Field>
+
+          <div className="bg-white rounded-xl border border-sky-100 p-4 space-y-3 shadow-sm">
+            <p className="text-xs font-semibold text-sky-500 uppercase tracking-wide">예문</p>
+            <Field label="영어 예문">
+              <input className="input-base" value={example} onChange={(e) => setExample(e.target.value)} />
+            </Field>
+            <Field label="예문 해석">
+              <input className="input-base" value={exampleTranslation} onChange={(e) => setExampleTranslation(e.target.value)} />
+            </Field>
+          </div>
+
           <Field label="상세 설명 (마크다운)">
-            <textarea className="input-base h-28 resize-none" value={explanation} onChange={(e) => setExplanation(e.target.value)} />
+            <textarea className="input-base h-24 resize-none" value={explanation} onChange={(e) => setExplanation(e.target.value)} />
           </Field>
           <Field label="유튜브 링크">
             <input className="input-base" value={youtubeUrl} onChange={(e) => setYoutubeUrl(e.target.value)} />
@@ -103,7 +120,7 @@ export default function EditPage() {
           <button
             onClick={handleSave}
             disabled={!phrase.trim() || saving}
-            className="w-full bg-indigo-500 hover:bg-indigo-600 disabled:opacity-40 text-white rounded-xl py-3 font-semibold active:scale-95 transition-all shadow-sm"
+            className="w-full bg-sky-500 hover:bg-sky-600 disabled:opacity-40 text-white rounded-xl py-3 font-semibold active:scale-95 transition-all shadow-sm"
           >
             {saving ? "저장 중..." : "저장"}
           </button>

@@ -4,6 +4,8 @@ export type Entry = {
   id: string;
   phrase: string;
   translation: string | null;
+  example: string | null;
+  example_translation: string | null;
   explanation: string | null;
   youtube_url: string | null;
   start_seconds: number | null;
