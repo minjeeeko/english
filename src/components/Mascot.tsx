@@ -5,72 +5,46 @@ type Props = {
 
 const FLOAT_EMOJIS = ["💗", "💕", "✨", "⭐", "🌟", "💫", "🩷", "💖", "🎀", "🌸"];
 
-const STROKE = { stroke: "#5a3010", strokeWidth: "2.2", strokeLinejoin: "round" as const, strokeLinecap: "round" as const };
-const STROKE_THIN = { stroke: "#5a3010", strokeWidth: "1.6", strokeLinejoin: "round" as const, strokeLinecap: "round" as const };
+const S = { stroke: "#5a3010", strokeWidth: "2.2", strokeLinejoin: "round" as const, strokeLinecap: "round" as const };
+const ST = { stroke: "#5a3010", strokeWidth: "1.5", strokeLinejoin: "round" as const, strokeLinecap: "round" as const };
 
 export function Mascot({ petted = false, onClick }: Props) {
   return (
     <div
-      className={`relative cursor-pointer select-none transition-all duration-200 ${
-        petted ? "scale-[1.1]" : "scale-100"
-      }`}
+      className={`relative cursor-pointer select-none transition-all duration-200 ${petted ? "scale-[1.1]" : "scale-100"}`}
       onClick={onClick}
     >
-      <svg
-        viewBox="0 0 200 210"
-        className={`w-48 h-48 ${petted ? "" : "animate-float"}`}
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        {/* ── Left ear (wobbly) ── */}
+      <svg viewBox="0 0 200 210" className={`w-48 h-48 ${petted ? "" : "animate-float"}`} xmlns="http://www.w3.org/2000/svg">
+
+        {/* ── Left ear ── */}
+        <path d="M 65 33 C 76 31,88 41,87 54 C 86 67,77 77,64 76 C 51 75,42 65,43 53 C 44 40,54 35,65 33 Z" fill="#7a4828" {...S} />
+        <path d="M 65 43 C 71 41,78 46,78 54 C 78 62,73 68,64 67 C 55 66,51 60,52 53 C 53 46,59 45,65 43 Z" fill="#c07848" {...ST} />
+
+        {/* ── Right ear ── */}
+        <path d="M 135 33 C 146 35,156 40,157 53 C 158 66,149 75,136 76 C 123 77,114 67,113 54 C 112 41,124 31,135 33 Z" fill="#7a4828" {...S} />
+        <path d="M 135 43 C 141 45,147 46,148 53 C 149 60,145 66,136 67 C 127 68,122 62,123 55 C 124 46,129 41,135 43 Z" fill="#c07848" {...ST} />
+
+        {/* ── Main body ── */}
         <path
-          d="M 66 34 C 76 30, 88 38, 88 52 C 88 66, 78 78, 65 77 C 52 76, 41 66, 42 53 C 43 40, 55 38, 66 34 Z"
-          fill="#7a4828" {...STROKE}
-        />
-        <path
-          d="M 66 44 C 72 41, 78 46, 78 53 C 78 60, 73 68, 65 68 C 57 68, 52 61, 53 54 C 54 47, 60 47, 66 44 Z"
-          fill="#c07848" {...STROKE_THIN}
+          d="M 103 56 C 128 53,156 64,170 86 C 184 108,182 142,172 164 C 162 186,140 206,100 205 C 60 204,36 186,26 164 C 16 142,18 106,34 84 C 50 62,78 59,103 56 Z"
+          fill="#f2c278" {...S}
         />
 
-        {/* ── Right ear (wobbly) ── */}
+        {/* ── Tummy ── */}
         <path
-          d="M 134 34 C 145 38, 157 40, 158 53 C 159 66, 148 76, 135 77 C 122 78, 112 66, 112 52 C 112 38, 122 30, 134 34 Z"
-          fill="#7a4828" {...STROKE}
-        />
-        <path
-          d="M 134 44 C 140 47, 146 47, 147 54 C 148 61, 143 68, 135 68 C 127 68, 122 60, 123 53 C 124 46, 128 41, 134 44 Z"
-          fill="#c07848" {...STROKE_THIN}
+          d="M 100 98 C 118 96,142 110,144 128 C 146 146,136 170,118 178 C 106 183,94 183,82 178 C 64 170,55 148,57 130 C 59 112,82 100,100 98 Z"
+          fill="#f8dfa8" {...ST}
         />
 
-        {/* ── Main body (wobbly blob) ── */}
-        <path
-          d="M 102 56
-             C 124 53, 150 60, 165 76
-             C 180 92, 182 114, 179 134
-             C 176 154, 166 174, 150 188
-             C 134 202, 116 207, 99 206
-             C 82 205, 64 200, 50 187
-             C 36 174, 22 154, 21 132
-             C 20 110, 24 88, 38 73
-             C 52 58, 80 59, 102 56 Z"
-          fill="#f2c278" {...STROKE}
-        />
-
-        {/* ── Tummy lighter patch (wobbly) ── */}
-        <path
-          d="M 100 100
-             C 116 98, 132 110, 134 124
-             C 136 138, 130 160, 116 168
-             C 104 175, 94 175, 83 167
-             C 70 159, 64 138, 67 124
-             C 70 110, 84 102, 100 100 Z"
-          fill="#f8dfa8" {...STROKE_THIN}
-        />
+        {/* ── Chubby cheeks (beige) ── */}
+        <path d="M 57 108 C 68 106,83 114,83 128 C 83 142,70 151,56 150 C 42 149,30 140,31 128 C 32 115,46 110,57 108 Z" fill="#f5d090" {...ST} />
+        <path d="M 143 108 C 154 110,168 115,169 128 C 170 140,158 149,144 150 C 130 151,117 142,117 128 C 117 114,132 106,143 108 Z" fill="#f5d090" {...ST} />
 
         {/* ── Eyes ── */}
         {petted ? (
           <>
-            <path d="M 72 107 C 76 100, 84 100, 88 107" {...STROKE} fill="none" strokeWidth="3" />
-            <path d="M 112 107 C 116 100, 124 100, 128 107" {...STROKE} fill="none" strokeWidth="3" />
+            <path d="M 73 107 C 77 100,85 100,89 107" fill="none" stroke="#2a1008" strokeWidth="3.2" strokeLinecap="round" />
+            <path d="M 111 107 C 115 100,123 100,127 107" fill="none" stroke="#2a1008" strokeWidth="3.2" strokeLinecap="round" />
           </>
         ) : (
           <>
@@ -81,53 +55,47 @@ export function Mascot({ petted = false, onClick }: Props) {
           </>
         )}
 
-        {/* ── Nose (wobbly) ── */}
-        <path
-          d="M 93 121 C 94 116, 107 116, 108 121 C 109 126, 105 130, 100 130 C 95 130, 92 126, 93 121 Z"
-          fill="#e07888" {...STROKE_THIN}
-        />
+        {/* ── Nose ── */}
+        <path d="M 92 121 C 93 115,108 115,108 122 C 108 128,104 130,100 130 C 96 130,91 127,92 121 Z" fill="#e07888" {...ST} />
         <ellipse cx="100" cy="120" rx="5" ry="3" fill="#f4aabb" opacity="0.55" />
 
-        {/* ── Blush (soft, no stroke) ── */}
-        <ellipse cx="68" cy="126" rx="16" ry="11" fill="#f4a0b8" opacity="0.5" />
-        <ellipse cx="132" cy="126" rx="16" ry="11" fill="#f4a0b8" opacity="0.5" />
+        {/* ── Mouth ── */}
+        {petted ? (
+          <>
+            <path d="M 90 132 C 96 142,104 142,110 132" fill="none" stroke="#c05868" strokeWidth="2.2" strokeLinecap="round" />
+            <path d="M 94 138 C 96 146,104 146,106 138" fill="#f07888" stroke="none" />
+          </>
+        ) : (
+          <path d="M 93 130 C 97 136,103 137,107 130" fill="none" stroke="#c05868" strokeWidth="2" strokeLinecap="round" />
+        )}
 
-        {/* ── Left arm / paw (wobbly) ── */}
-        <path
-          d="M 44 152 C 36 144, 24 142, 22 152 C 20 162, 28 168, 38 166 C 48 164, 52 156, 44 152 Z"
-          fill="#f2c278" {...STROKE}
-        />
-        <ellipse cx="30" cy="158" rx="5" ry="4" fill="#f4a0b8" opacity="0.6" />
+        {/* ── Blush ── */}
+        <ellipse cx="67" cy="126" rx="16" ry="11" fill="#f4a0b8" opacity="0.5" />
+        <ellipse cx="133" cy="126" rx="16" ry="11" fill="#f4a0b8" opacity="0.5" />
 
-        {/* ── Right arm / paw (wobbly) ── */}
-        <path
-          d="M 156 152 C 164 156, 178 142, 178 152 C 178 162, 170 168, 160 166 C 150 164, 148 144, 156 152 Z"
-          fill="#f2c278" {...STROKE}
-        />
-        <ellipse cx="170" cy="158" rx="5" ry="4" fill="#f4a0b8" opacity="0.6" />
+        {/* ── Left arm ── */}
+        <path d="M 46 155 C 36 144,20 140,20 152 C 20 162,30 168,42 165 C 52 162,54 162,46 155 Z" fill="#f2c278" {...S} />
+        <path d="M 28 152 C 24 144,18 138,24 136 C 30 134,36 138,36 146 C 36 152,30 154,28 152 Z" fill="#f2c278" {...S} />
+        <circle cx="26" cy="139" r="4.5" fill="#f4a0b8" opacity="0.65" />
 
-        {/* ── Left foot (wobbly) ── */}
-        <path
-          d="M 56 192 C 58 184, 72 182, 82 185 C 92 188, 96 196, 90 201 C 82 206, 64 206, 56 200 C 50 196, 54 196, 56 192 Z"
-          fill="#f2c278" {...STROKE}
-        />
-        <ellipse cx="74" cy="198" rx="11" ry="6" fill="#f4a0b8" opacity="0.55" />
+        {/* ── Right arm ── */}
+        <path d="M 154 155 C 146 162,148 162,158 165 C 170 168,180 162,180 152 C 180 140,164 144,154 155 Z" fill="#f2c278" {...S} />
+        <path d="M 172 152 C 174 154,170 152,164 146 C 164 138,170 134,176 136 C 182 138,176 144,172 152 Z" fill="#f2c278" {...S} />
+        <circle cx="174" cy="139" r="4.5" fill="#f4a0b8" opacity="0.65" />
 
-        {/* ── Right foot (wobbly) ── */}
-        <path
-          d="M 144 192 C 146 196, 150 196, 144 200 C 136 206, 118 206, 110 201 C 104 196, 108 188, 118 185 C 128 182, 142 184, 144 192 Z"
-          fill="#f2c278" {...STROKE}
-        />
-        <ellipse cx="126" cy="198" rx="11" ry="6" fill="#f4a0b8" opacity="0.55" />
+        {/* ── Left foot ── */}
+        <path d="M 55 186 C 60 182,80 182,90 188 C 98 193,96 204,82 207 C 68 210,54 204,52 196 C 50 190,52 188,55 186 Z" fill="#f2c278" {...S} />
+        <ellipse cx="73" cy="200" rx="12" ry="6" fill="#f4a0b8" opacity="0.55" />
+
+        {/* ── Right foot ── */}
+        <path d="M 145 186 C 148 188,150 190,148 196 C 146 204,132 210,118 207 C 104 204,102 193,110 188 C 120 182,140 182,145 186 Z" fill="#f2c278" {...S} />
+        <ellipse cx="127" cy="200" rx="12" ry="6" fill="#f4a0b8" opacity="0.55" />
 
         {/* ── Tail ── */}
-        <path
-          d="M 166 160 C 174 156, 182 162, 180 170 C 178 178, 168 180, 162 174 C 156 168, 158 162, 166 160 Z"
-          fill="#f8dfa8" {...STROKE_THIN}
-        />
+        <path d="M 174 155 C 182 154,185 160,183 167 C 181 174,174 175,170 170 C 166 165,166 156,174 155 Z" fill="#f8dfa8" {...ST} />
+
       </svg>
 
-      {/* Floating emojis when petted */}
       {petted && (
         <div className="absolute inset-0 pointer-events-none overflow-visible">
           {FLOAT_EMOJIS.map((emoji, i) => (
