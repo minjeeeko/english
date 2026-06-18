@@ -3,6 +3,9 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Sweet', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+      },
       keyframes: {
         float: {
           "0%, 100%": { transform: "translateY(0px)" },

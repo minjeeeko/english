@@ -21,19 +21,16 @@ export default function AllPage() {
   }, [search, sort, activeTag]);
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 pb-10">
+    <div className="min-h-screen bg-[#faf9f7] text-stone-800 pb-10">
       <div className="max-w-lg mx-auto px-4 pt-4">
         <div className="flex items-center gap-3 mb-4">
-          <button
-            onClick={() => navigate("/")}
-            className="text-sm text-indigo-400 hover:text-indigo-300"
-          >
+          <button onClick={() => navigate("/")} className="text-sm text-indigo-400 hover:text-indigo-600">
             ←
           </button>
-          <h1 className="text-xl font-bold flex-1">전체 구문</h1>
+          <h1 className="text-xl font-bold flex-1 text-stone-900">전체 구문</h1>
           <button
             onClick={() => setSort((s) => (s === "created_at" ? "due_date" : "created_at"))}
-            className="text-xs border border-slate-600 rounded-full px-3 py-1 text-slate-300 hover:bg-slate-700"
+            className="text-xs border border-stone-200 rounded-full px-3 py-1 text-stone-500 hover:bg-stone-100 bg-white shadow-sm"
           >
             {sort === "created_at" ? "최신순" : "복습임박순"}
           </button>
@@ -51,7 +48,7 @@ export default function AllPage() {
             <button
               onClick={() => setActiveTag(null)}
               className={`text-xs rounded-full px-3 py-1 transition-colors ${
-                !activeTag ? "bg-indigo-600 text-white" : "bg-slate-700 text-slate-300"
+                !activeTag ? "bg-indigo-500 text-white" : "bg-white text-stone-500 border border-stone-200"
               }`}
             >
               전체
@@ -61,7 +58,7 @@ export default function AllPage() {
                 key={t}
                 onClick={() => setActiveTag(activeTag === t ? null : t)}
                 className={`text-xs rounded-full px-3 py-1 transition-colors ${
-                  activeTag === t ? "bg-indigo-600 text-white" : "bg-slate-700 text-slate-300"
+                  activeTag === t ? "bg-indigo-500 text-white" : "bg-white text-stone-500 border border-stone-200"
                 }`}
               >
                 {t}
@@ -80,7 +77,7 @@ export default function AllPage() {
             />
           ))}
           {entries.length === 0 && (
-            <p className="text-slate-500 text-center py-12">구문이 없어요.</p>
+            <p className="text-stone-400 text-center py-12">구문이 없어요.</p>
           )}
         </div>
       </div>
@@ -88,21 +85,13 @@ export default function AllPage() {
   );
 }
 
-function EntryCard({
-  entry,
-  onEdit,
-  onStudy,
-}: {
-  entry: Entry;
-  onEdit: () => void;
-  onStudy: () => void;
-}) {
+function EntryCard({ entry, onEdit, onStudy }: { entry: Entry; onEdit: () => void; onStudy: () => void }) {
   const ytId = entry.youtube_url ? parseYoutube(entry.youtube_url).id : null;
 
   return (
     <div
       onClick={onStudy}
-      className="bg-slate-800 rounded-xl overflow-hidden cursor-pointer hover:bg-slate-700/80 active:scale-[0.99] transition-all"
+      className="bg-white rounded-xl overflow-hidden cursor-pointer hover:shadow-md active:scale-[0.99] transition-all border border-stone-100 shadow-sm"
     >
       <div className="flex gap-3 p-3">
         {ytId && (
@@ -113,20 +102,17 @@ function EntryCard({
           />
         )}
         <div className="flex-1 min-w-0">
-          <p className="font-semibold text-white truncate">{entry.phrase}</p>
+          <p className="font-semibold text-stone-900 truncate">{entry.phrase}</p>
           {entry.translation && (
-            <p className="text-sm text-slate-400 truncate">{entry.translation}</p>
+            <p className="text-sm text-stone-400 truncate">{entry.translation}</p>
           )}
           <div className="flex items-center justify-between mt-1.5">
-            <span className="text-xs text-indigo-300 bg-indigo-900/50 rounded px-2 py-0.5">
+            <span className="text-xs text-indigo-400 bg-indigo-50 rounded px-2 py-0.5 border border-indigo-100">
               📅 {entry.due_date}
             </span>
             <button
-              onClick={(ev) => {
-                ev.stopPropagation();
-                onEdit();
-              }}
-              className="text-xs text-slate-500 hover:text-slate-300 px-2 py-1"
+              onClick={(ev) => { ev.stopPropagation(); onEdit(); }}
+              className="text-xs text-stone-400 hover:text-stone-600 px-2 py-1"
             >
               편집
             </button>
