@@ -5,6 +5,9 @@ type Props = {
 
 const FLOAT_EMOJIS = ["💗", "💕", "✨", "⭐", "🌟", "💫", "🩷", "💖", "🎀", "🌸"];
 
+const STROKE = { stroke: "#5a3010", strokeWidth: "2.2", strokeLinejoin: "round" as const, strokeLinecap: "round" as const };
+const STROKE_THIN = { stroke: "#5a3010", strokeWidth: "1.6", strokeLinejoin: "round" as const, strokeLinecap: "round" as const };
+
 export function Mascot({ petted = false, onClick }: Props) {
   return (
     <div
@@ -18,75 +21,110 @@ export function Mascot({ petted = false, onClick }: Props) {
         className={`w-48 h-48 ${petted ? "" : "animate-float"}`}
         xmlns="http://www.w3.org/2000/svg"
       >
-        {/* ── Ears ── */}
-        <circle cx="64" cy="54" r="22" fill="#7a4828" />
-        <circle cx="136" cy="54" r="22" fill="#7a4828" />
-        <circle cx="64" cy="54" r="13" fill="#c07848" />
-        <circle cx="136" cy="54" r="13" fill="#c07848" />
+        {/* ── Left ear (wobbly) ── */}
+        <path
+          d="M 66 34 C 76 30, 88 38, 88 52 C 88 66, 78 78, 65 77 C 52 76, 41 66, 42 53 C 43 40, 55 38, 66 34 Z"
+          fill="#7a4828" {...STROKE}
+        />
+        <path
+          d="M 66 44 C 72 41, 78 46, 78 53 C 78 60, 73 68, 65 68 C 57 68, 52 61, 53 54 C 54 47, 60 47, 66 44 Z"
+          fill="#c07848" {...STROKE_THIN}
+        />
 
-        {/* ── Main body (one big round blob) ── */}
-        <ellipse cx="100" cy="128" rx="76" ry="74" fill="#f2c278" />
+        {/* ── Right ear (wobbly) ── */}
+        <path
+          d="M 134 34 C 145 38, 157 40, 158 53 C 159 66, 148 76, 135 77 C 122 78, 112 66, 112 52 C 112 38, 122 30, 134 34 Z"
+          fill="#7a4828" {...STROKE}
+        />
+        <path
+          d="M 134 44 C 140 47, 146 47, 147 54 C 148 61, 143 68, 135 68 C 127 68, 122 60, 123 53 C 124 46, 128 41, 134 44 Z"
+          fill="#c07848" {...STROKE_THIN}
+        />
 
-        {/* ── Tummy lighter patch ── */}
-        <ellipse cx="100" cy="140" rx="44" ry="42" fill="#f8dfa8" />
+        {/* ── Main body (wobbly blob) ── */}
+        <path
+          d="M 102 56
+             C 124 53, 150 60, 165 76
+             C 180 92, 182 114, 179 134
+             C 176 154, 166 174, 150 188
+             C 134 202, 116 207, 99 206
+             C 82 205, 64 200, 50 187
+             C 36 174, 22 154, 21 132
+             C 20 110, 24 88, 38 73
+             C 52 58, 80 59, 102 56 Z"
+          fill="#f2c278" {...STROKE}
+        />
 
-        {/* ── Chubby cheeks ── */}
-        <ellipse cx="56" cy="128" rx="26" ry="22" fill="#f5d090" />
-        <ellipse cx="144" cy="128" rx="26" ry="22" fill="#f5d090" />
+        {/* ── Tummy lighter patch (wobbly) ── */}
+        <path
+          d="M 100 100
+             C 116 98, 132 110, 134 124
+             C 136 138, 130 160, 116 168
+             C 104 175, 94 175, 83 167
+             C 70 159, 64 138, 67 124
+             C 70 110, 84 102, 100 100 Z"
+          fill="#f8dfa8" {...STROKE_THIN}
+        />
 
+        {/* ── Eyes ── */}
         {petted ? (
-          /* ── Happy ^ ^ eyes ── */
           <>
-            <path d="M 72 106 Q 82 98 92 106" stroke="#2a1008" strokeWidth="3.5" fill="none" strokeLinecap="round" />
-            <path d="M 108 106 Q 118 98 128 106" stroke="#2a1008" strokeWidth="3.5" fill="none" strokeLinecap="round" />
+            <path d="M 72 107 C 76 100, 84 100, 88 107" {...STROKE} fill="none" strokeWidth="3" />
+            <path d="M 112 107 C 116 100, 124 100, 128 107" {...STROKE} fill="none" strokeWidth="3" />
           </>
         ) : (
-          /* ── Normal small dot eyes ── */
           <>
-            <circle cx="82" cy="108" r="6" fill="#2a1008" />
-            <circle cx="118" cy="108" r="6" fill="#2a1008" />
-            <circle cx="84" cy="106" r="2.5" fill="white" />
-            <circle cx="120" cy="106" r="2.5" fill="white" />
+            <circle cx="81" cy="109" r="6.5" fill="#2a1008" />
+            <circle cx="119" cy="109" r="6.5" fill="#2a1008" />
+            <circle cx="83" cy="107" r="2.5" fill="white" />
+            <circle cx="121" cy="107" r="2.5" fill="white" />
           </>
         )}
 
-        {/* ── Pink nose (prominent, centered) ── */}
-        <ellipse cx="100" cy="122" rx="9" ry="7" fill="#e07888" />
-        <ellipse cx="100" cy="120" rx="5" ry="3" fill="#f09aaa" opacity="0.6" />
+        {/* ── Nose (wobbly) ── */}
+        <path
+          d="M 93 121 C 94 116, 107 116, 108 121 C 109 126, 105 130, 100 130 C 95 130, 92 126, 93 121 Z"
+          fill="#e07888" {...STROKE_THIN}
+        />
+        <ellipse cx="100" cy="120" rx="5" ry="3" fill="#f4aabb" opacity="0.55" />
 
-        {/* ── Mouth ── */}
-        {petted ? (
-          <>
-            <path d="M 90 130 Q 100 140 110 130" stroke="#c05868" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-            {/* little tongue */}
-            <ellipse cx="100" cy="137" rx="7" ry="5" fill="#f07888" />
-          </>
-        ) : (
-          <path d="M 93 130 Q 100 136 107 130" stroke="#c05868" strokeWidth="2" fill="none" strokeLinecap="round" />
-        )}
+        {/* ── Blush (soft, no stroke) ── */}
+        <ellipse cx="68" cy="126" rx="16" ry="11" fill="#f4a0b8" opacity="0.5" />
+        <ellipse cx="132" cy="126" rx="16" ry="11" fill="#f4a0b8" opacity="0.5" />
 
-        {/* ── Blush ── */}
-        <ellipse cx="68" cy="126" rx="16" ry="11" fill="#f4a0b8" opacity="0.55" />
-        <ellipse cx="132" cy="126" rx="16" ry="11" fill="#f4a0b8" opacity="0.55" />
+        {/* ── Left arm / paw (wobbly) ── */}
+        <path
+          d="M 44 152 C 36 144, 24 142, 22 152 C 20 162, 28 168, 38 166 C 48 164, 52 156, 44 152 Z"
+          fill="#f2c278" {...STROKE}
+        />
+        <ellipse cx="30" cy="158" rx="5" ry="4" fill="#f4a0b8" opacity="0.6" />
 
-        {/* ── Arms / paws (hihi pose — raised toward face) ── */}
-        <ellipse cx="38" cy="148" rx="14" ry="10" fill="#f2c278" transform="rotate(-45 38 148)" />
-        <ellipse cx="162" cy="148" rx="14" ry="10" fill="#f2c278" transform="rotate(45 162 148)" />
-        {/* paw tips */}
-        <circle cx="30" cy="138" r="8" fill="#f2c278" />
-        <circle cx="170" cy="138" r="8" fill="#f2c278" />
-        <circle cx="28" cy="136" r="4" fill="#f4a0b8" opacity="0.7" />
-        <circle cx="172" cy="136" r="4" fill="#f4a0b8" opacity="0.7" />
+        {/* ── Right arm / paw (wobbly) ── */}
+        <path
+          d="M 156 152 C 164 156, 178 142, 178 152 C 178 162, 170 168, 160 166 C 150 164, 148 144, 156 152 Z"
+          fill="#f2c278" {...STROKE}
+        />
+        <ellipse cx="170" cy="158" rx="5" ry="4" fill="#f4a0b8" opacity="0.6" />
 
-        {/* ── Feet ── */}
-        <ellipse cx="74" cy="196" rx="22" ry="12" fill="#f2c278" />
-        <ellipse cx="126" cy="196" rx="22" ry="12" fill="#f2c278" />
-        {/* foot pads */}
-        <ellipse cx="74" cy="200" rx="12" ry="7" fill="#f4a0b8" opacity="0.6" />
-        <ellipse cx="126" cy="200" rx="12" ry="7" fill="#f4a0b8" opacity="0.6" />
+        {/* ── Left foot (wobbly) ── */}
+        <path
+          d="M 56 192 C 58 184, 72 182, 82 185 C 92 188, 96 196, 90 201 C 82 206, 64 206, 56 200 C 50 196, 54 196, 56 192 Z"
+          fill="#f2c278" {...STROKE}
+        />
+        <ellipse cx="74" cy="198" rx="11" ry="6" fill="#f4a0b8" opacity="0.55" />
 
-        {/* ── Tiny tail ── */}
-        <circle cx="174" cy="162" r="8" fill="#f8dfa8" />
+        {/* ── Right foot (wobbly) ── */}
+        <path
+          d="M 144 192 C 146 196, 150 196, 144 200 C 136 206, 118 206, 110 201 C 104 196, 108 188, 118 185 C 128 182, 142 184, 144 192 Z"
+          fill="#f2c278" {...STROKE}
+        />
+        <ellipse cx="126" cy="198" rx="11" ry="6" fill="#f4a0b8" opacity="0.55" />
+
+        {/* ── Tail ── */}
+        <path
+          d="M 166 160 C 174 156, 182 162, 180 170 C 178 178, 168 180, 162 174 C 156 168, 158 162, 166 160 Z"
+          fill="#f8dfa8" {...STROKE_THIN}
+        />
       </svg>
 
       {/* Floating emojis when petted */}
