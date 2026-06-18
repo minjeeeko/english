@@ -55,7 +55,7 @@ export default function App() {
       <div className="absolute top-0 left-1/4 w-80 h-80 bg-sky-50 rounded-full blur-3xl opacity-70 pointer-events-none" />
       <div className="absolute bottom-10 right-1/4 w-64 h-64 bg-orange-50 rounded-full blur-3xl opacity-50 pointer-events-none" />
 
-      <div className="relative z-10 flex flex-col items-center gap-4 px-4 w-full max-w-sm -mt-16">
+      <div className="relative z-10 flex flex-col items-center gap-4 px-4 w-full max-w-sm -mt-28">
         {/* Speech bubble */}
         {!loading ? (
           <div key={bubbleKey} className="animate-fadeSlideIn w-full">
