@@ -65,26 +65,23 @@ export default function App() {
           {!loading ? (
             <div key={bubbleKey} className="animate-fadeSlideIn w-full">
               {cheerMsg ? (
-                <div className="relative bg-white text-stone-800 rounded-2xl p-4 shadow-md border border-sky-100 text-center">
+                <div className="bg-white text-stone-800 rounded-2xl p-4 shadow-md border border-sky-100 text-center">
                   <p className="text-base font-semibold">{cheerMsg}</p>
-                  <BubbleTail color="white" />
                 </div>
               ) : entry ? (
                 <div
-                  className="relative bg-white text-stone-800 rounded-2xl p-4 shadow-md border border-sky-100 cursor-pointer active:scale-[0.98] transition-transform animate-pulse-ring"
+                  className="bg-white text-stone-800 rounded-2xl p-4 shadow-md border border-sky-100 cursor-pointer active:scale-[0.98] transition-transform animate-pulse-ring"
                   onClick={() => navigate(`/study/${entry.id}`, { state: { entry } })}
                 >
                   <p className="text-lg font-bold leading-snug mb-1">{entry.phrase}</p>
                   {entry.translation && (
                     <p className="text-sm text-stone-500">{entry.translation}</p>
                   )}
-                  <BubbleTail color="white" />
                 </div>
               ) : (
-                <div className="relative bg-white text-stone-800 rounded-2xl p-4 shadow-md border border-sky-100 text-center">
+                <div className="bg-white text-stone-800 rounded-2xl p-4 shadow-md border border-sky-100 text-center">
                   <p className="text-base font-medium text-stone-500">아직 추가된 구문이 없어요</p>
                   <p className="text-sm text-sky-400 mt-1">우측 하단 + 버튼으로 추가해보세요!</p>
-                  <BubbleTail color="white" />
                 </div>
               )}
             </div>
@@ -94,7 +91,7 @@ export default function App() {
         </div>
 
         {/* Mascot + button pushed lower */}
-        <div className="flex flex-col items-center gap-3 mt-6">
+        <div className="flex flex-col items-center gap-3 mt-16">
           <Mascot petted={petted} onClick={handlePet} />
 
           {!loading && !cheerMsg && (
@@ -134,12 +131,5 @@ export default function App() {
         </button>
       </div>
     </div>
-  );
-}
-
-function BubbleTail({ color }: { color: string }) {
-  const borderColor = color === "white" ? "border-t-white" : `border-t-${color}`;
-  return (
-    <div className={`absolute -bottom-3 left-1/2 -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-t-[12px] border-l-transparent border-r-transparent ${borderColor}`} />
   );
 }
