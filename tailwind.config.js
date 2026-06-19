@@ -4,8 +4,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Gothic A1"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        jua: ['"Jua"', 'sans-serif'],
+        sans: ['Sweet', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        jua: ['Sweet', 'sans-serif'],
       },
       colors: {
         ink: "#2e3338",
