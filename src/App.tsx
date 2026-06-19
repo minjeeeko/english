@@ -2,13 +2,15 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { listEntries } from "./lib/entries";
 import type { Entry } from "./lib/entries";
-import { HamSVG } from "./components/HamSVG";
 import { TabBar } from "./components/TabBar";
 import { requestNotificationPermission, scheduleNotifications } from "./lib/notifications";
 
 function todayStr() {
   return new Date().toLocaleDateString("ko-KR", { month: "long", day: "numeric", weekday: "short" });
 }
+
+// Tab bar height constant — used to compute bottom padding
+const TAB_H = 48;
 
 export default function App() {
   const navigate = useNavigate();
@@ -19,8 +21,14 @@ export default function App() {
   const [userAnswer, setUserAnswer] = useState("");
   const [inputDraft, setInputDraft] = useState("");
   const [loading, setLoading] = useState(true);
+  const [largeFontMode, setLargeFontMode] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  // Apply / remove large-font class on <body>
+  useEffect(() => {
+    document.body.classList.toggle("font-large", largeFontMode);
+  }, [largeFontMode]);
 
   const fetchEntries = useCallback(async () => {
     setLoading(true);
@@ -39,7 +47,6 @@ export default function App() {
     });
   }, [fetchEntries]);
 
-  // Scroll to bottom whenever chat updates
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [submitted, showAnswer, quizIndex]);
@@ -48,11 +55,14 @@ export default function App() {
   const total = entries.length;
   const totalReviews = entries.reduce((sum, e) => sum + e.review_count, 0);
 
+  const fs = largeFontMode;
+
   const handleSend = () => {
     if (!inputDraft.trim()) return;
     setUserAnswer(inputDraft.trim());
     setInputDraft("");
     setSubmitted(true);
+    if (inputRef.current) inputRef.current.style.height = "40px";
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -68,6 +78,7 @@ export default function App() {
     setShowAnswer(false);
     setUserAnswer("");
     setInputDraft("");
+    if (inputRef.current) inputRef.current.style.height = "40px";
   };
   const goPrev = () => {
     setQuizIndex((i) => (i - 1 + Math.max(total, 1)) % Math.max(total, 1));
@@ -75,85 +86,127 @@ export default function App() {
     setShowAnswer(false);
     setUserAnswer("");
     setInputDraft("");
+    if (inputRef.current) inputRef.current.style.height = "40px";
   };
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "#b2c7d9", paddingBottom: "calc(56px + env(safe-area-inset-bottom))" }}>
-      {/* Chat header */}
-      <header className="flex items-center justify-between px-4 py-3 bg-[#3c3c3c]">
-        <span className="text-[14px] font-[600] text-white">햄글리시 🐹</span>
-        <div className="flex items-center gap-3">
-          <span className="text-[12px] text-[#aaa]">{todayStr()}</span>
-          <span className="text-[12px] text-[#aaa]">복습 <span className="text-[#fee500] font-[700]">{totalReviews}</span>회</span>
+    <div
+      className="flex flex-col"
+      style={{
+        height: "100dvh",
+        background: "#b2c7d9",
+      }}
+    >
+      {/* ── HEADER ── */}
+      <header className="flex-shrink-0 bg-[#3c3c3c] px-4 pt-3 pb-2">
+        {/* Row 1: title + controls */}
+        <div className="flex items-center justify-between">
+          <span className={`font-[700] text-white ${fs ? "text-[20px]" : "text-[17px]"}`}>
+            햄글리시 🐹
+          </span>
+          <div className="flex items-center gap-2">
+            {/* Font size toggle */}
+            <button
+              onClick={() => setLargeFontMode((v) => !v)}
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-full border text-[11px] font-[600] transition-colors
+                ${largeFontMode
+                  ? "bg-[#fee500] border-[#fee500] text-[#1c1c1e]"
+                  : "bg-transparent border-[#666] text-[#aaa]"}`}
+            >
+              <span style={{ fontSize: "13px" }}>가</span>
+              <span style={{ fontSize: "10px" }}>가</span>
+              <span className="ml-0.5">{largeFontMode ? "확대" : "기본"}</span>
+            </button>
+            <span className={`text-[#aaa] ${fs ? "text-[13px]" : "text-[11px]"}`}>
+              복습 <span className="text-[#fee500] font-[700]">{totalReviews}</span>회
+            </span>
+          </div>
+        </div>
+        {/* Row 2: date + progress */}
+        <div className="flex items-center gap-3 mt-2">
+          <span className={`text-[#aaa] flex-shrink-0 ${fs ? "text-[13px]" : "text-[11px]"}`}>
+            {todayStr()}
+          </span>
+          {!loading && total > 0 && (
+            <>
+              <div className="flex-1 h-[4px] rounded-full bg-[#555] overflow-hidden">
+                <div
+                  className="h-full bg-[#fee500] rounded-full transition-all duration-300"
+                  style={{ width: `${((quizIndex + 1) / total) * 100}%` }}
+                />
+              </div>
+              <span className={`text-[#aaa] flex-shrink-0 ${fs ? "text-[13px]" : "text-[11px]"}`}>
+                {quizIndex + 1} / {total}
+              </span>
+            </>
+          )}
         </div>
       </header>
 
-      {/* Progress bar */}
-      {!loading && total > 0 && (
-        <div className="px-4 pt-2 pb-1 bg-[#3c3c3c] flex items-center gap-3">
-          <div className="flex-1 h-[4px] rounded-full bg-[#555] overflow-hidden">
-            <div
-              className="h-full bg-[#fee500] rounded-full transition-all duration-300"
-              style={{ width: `${((quizIndex + 1) / total) * 100}%` }}
-            />
-          </div>
-          <span className="text-[11px] text-[#aaa] flex-shrink-0">{quizIndex + 1} / {total}</span>
-        </div>
-      )}
-
-      {/* Chat messages */}
-      <div className="flex-1 overflow-y-auto px-3 py-4 flex flex-col gap-3">
+      {/* ── CHAT MESSAGES (scrollable) ── */}
+      <div className="flex-1 overflow-y-auto px-3 py-4 flex flex-col gap-3 min-h-0">
         {loading ? (
-          <div className="flex-1 flex items-center justify-center">
-            <span className="text-[13px] text-white/70">불러오는 중…</span>
+          <div className="flex items-center justify-center py-10">
+            <span className={`text-white/70 ${fs ? "text-[16px]" : "text-[13px]"}`}>불러오는 중…</span>
           </div>
         ) : entries.length === 0 ? (
-          <EmptyState />
+          <EmptyState fs={fs} />
         ) : entry && (
           <>
-            {/* Ham greeting */}
-            <HamBubble>
-              <p className="text-[14px] font-[600] text-[#1c1c1e]">안녕! 오늘도 한 입 🐾</p>
-              <p className="text-[13px] text-[#6b6f7e] mt-0.5">이 구문으로 예문을 만들어줘!</p>
+            <HamBubble fs={fs}>
+              <p className={`font-[600] text-[#1c1c1e] ${fs ? "text-[17px]" : "text-[14px]"}`}>
+                안녕! 오늘도 한 입 🐾
+              </p>
+              <p className={`text-[#6b6f7e] mt-0.5 ${fs ? "text-[15px]" : "text-[13px]"}`}>
+                이 구문으로 예문을 만들어줘!
+              </p>
             </HamBubble>
 
-            {/* Ham phrase card */}
-            <HamBubble>
+            <HamBubble fs={fs}>
               <div
                 className="cursor-pointer active:opacity-80 transition-opacity"
                 onClick={() => navigate(`/study/${entry.id}`, { state: { entry } })}
               >
-                <p className="text-[11px] font-[600] text-[#34b3e0] uppercase tracking-wider mb-1.5">오늘의 구문</p>
-                <p className="text-[22px] font-[800] text-[#1c1c1e] leading-tight">{entry.phrase}</p>
+                <p className={`font-[600] text-[#34b3e0] uppercase tracking-wider mb-1.5 ${fs ? "text-[13px]" : "text-[11px]"}`}>
+                  오늘의 구문
+                </p>
+                <p className={`font-[800] text-[#1c1c1e] leading-tight ${fs ? "text-[26px]" : "text-[22px]"}`}>
+                  {entry.phrase}
+                </p>
                 {entry.translation && (
-                  <p className="text-[13px] text-[#6b6f7e] mt-1">{entry.translation}</p>
+                  <p className={`text-[#6b6f7e] mt-1 ${fs ? "text-[16px]" : "text-[13px]"}`}>
+                    {entry.translation}
+                  </p>
                 )}
-                <p className="text-[11px] text-[#a5a8b5] mt-2">탭해서 영상으로 학습 →</p>
+                <p className={`text-[#a5a8b5] mt-2 ${fs ? "text-[13px]" : "text-[11px]"}`}>
+                  탭해서 영상으로 학습 →
+                </p>
               </div>
             </HamBubble>
 
-            {/* Ham prompt to write */}
-            <HamBubble>
-              <p className="text-[14px] text-[#1c1c1e]">위 구문을 사용해서 예문을 써봐! 😊</p>
+            <HamBubble fs={fs}>
+              <p className={`text-[#1c1c1e] ${fs ? "text-[16px]" : "text-[14px]"}`}>
+                위 구문을 사용해서 예문을 써봐! 😊
+              </p>
             </HamBubble>
 
-            {/* User's answer (after submit) */}
             {submitted && (
               <div className="flex justify-end animate-fadeSlideIn">
-                <div className="max-w-[75%]">
-                  <div className="bg-[#fee500] rounded-[18px] rounded-tr-[4px] px-4 py-2.5 shadow-subtle">
-                    <p className="text-[14px] text-[#1c1c1e] leading-relaxed whitespace-pre-wrap">{userAnswer}</p>
-                  </div>
+                <div className="max-w-[78%] bg-[#fee500] rounded-[18px] rounded-tr-[4px] px-4 py-2.5 shadow-subtle">
+                  <p className={`text-[#1c1c1e] leading-relaxed whitespace-pre-wrap ${fs ? "text-[16px]" : "text-[14px]"}`}>
+                    {userAnswer}
+                  </p>
                 </div>
               </div>
             )}
 
-            {/* Ham response after submit */}
             {submitted && !showAnswer && (
-              <HamBubble>
-                <p className="text-[14px] text-[#1c1c1e]">잘 썼어! 모범 답안도 볼래? 👀</p>
+              <HamBubble fs={fs}>
+                <p className={`text-[#1c1c1e] ${fs ? "text-[16px]" : "text-[14px]"}`}>
+                  잘 썼어! 모범 답안도 볼래? 👀
+                </p>
                 <button
-                  className="mt-2 text-[13px] font-[600] text-[#34b3e0] underline underline-offset-2"
+                  className={`mt-2 font-[600] text-[#34b3e0] underline underline-offset-2 ${fs ? "text-[15px]" : "text-[13px]"}`}
                   onClick={() => setShowAnswer(true)}
                 >
                   모범 답안 보기
@@ -161,68 +214,77 @@ export default function App() {
               </HamBubble>
             )}
 
-            {/* Ham model answer */}
             {showAnswer && (
-              <HamBubble>
-                <p className="text-[11px] font-[600] text-[#34b3e0] uppercase tracking-wider mb-1.5">햄글리의 예문</p>
+              <HamBubble fs={fs}>
+                <p className={`font-[600] text-[#34b3e0] uppercase tracking-wider mb-1.5 ${fs ? "text-[13px]" : "text-[11px]"}`}>
+                  햄글리의 예문
+                </p>
                 {entry.example ? (
                   <>
-                    <p className="text-[14px] font-[700] text-[#1c1c1e] leading-relaxed">"{entry.example}"</p>
+                    <p className={`font-[700] text-[#1c1c1e] leading-relaxed ${fs ? "text-[16px]" : "text-[14px]"}`}>
+                      "{entry.example}"
+                    </p>
                     {entry.example_translation && (
-                      <p className="text-[12px] text-[#6b6f7e] mt-1">{entry.example_translation}</p>
+                      <p className={`text-[#6b6f7e] mt-1 ${fs ? "text-[14px]" : "text-[12px]"}`}>
+                        {entry.example_translation}
+                      </p>
                     )}
                   </>
                 ) : (
-                  <p className="text-[13px] text-[#a5a8b5]">등록된 모범 답안이 없어요.</p>
+                  <p className={`text-[#a5a8b5] ${fs ? "text-[15px]" : "text-[13px]"}`}>
+                    등록된 모범 답안이 없어요.
+                  </p>
                 )}
               </HamBubble>
             )}
 
-            {/* Scroll anchor */}
             <div ref={bottomRef} />
           </>
         )}
       </div>
 
-      {/* Prev / Next nav */}
+      {/* ── PREV / NEXT ── */}
       {!loading && total > 0 && (
-        <div className="flex gap-2 px-3 pb-2">
+        <div className="flex-shrink-0 flex gap-2 px-3 py-2 bg-[#b2c7d9]">
           <button
             onClick={goPrev}
-            className="flex-1 py-2 rounded-full bg-white/80 text-[13px] font-[600] text-[#555a6a] active:bg-white/60 transition-colors"
+            className={`flex-1 py-2 rounded-full bg-white/80 font-[600] text-[#555a6a] active:bg-white/60 transition-colors ${fs ? "text-[15px]" : "text-[13px]"}`}
           >
             ‹ 이전 문제
           </button>
           <button
             onClick={goNext}
-            className="flex-1 py-2 rounded-full bg-[#fee500] text-[13px] font-[600] text-[#1c1c1e] active:bg-[#fcd600] transition-colors"
+            className={`flex-1 py-2 rounded-full bg-[#fee500] font-[600] text-[#1c1c1e] active:bg-[#fcd600] transition-colors ${fs ? "text-[15px]" : "text-[13px]"}`}
           >
             다음 문제 ›
           </button>
         </div>
       )}
 
-      {/* Chat input bar */}
+      {/* ── CHAT INPUT BAR ── */}
       {!loading && total > 0 && (
-        <div className="bg-[#f0f0f0] border-t border-[#d0d0d0] px-3 py-2 flex items-end gap-2">
+        <div
+          className="flex-shrink-0 bg-[#f0f0f0] border-t border-[#d0d0d0] px-3 py-2 flex items-end gap-2"
+          style={{ paddingBottom: `max(8px, env(safe-area-inset-bottom))` }}
+        >
           <textarea
             ref={inputRef}
-            className="flex-1 bg-white rounded-[20px] px-4 py-2.5 text-[14px] text-[#1c1c1e] placeholder-[#a5a8b5] resize-none focus:outline-none leading-relaxed"
-            style={{ minHeight: "40px", maxHeight: "100px" }}
+            className={`flex-1 bg-white rounded-[20px] px-4 py-2.5 text-[#1c1c1e] placeholder-[#a5a8b5] resize-none focus:outline-none leading-relaxed ${fs ? "text-[16px]" : "text-[14px]"}`}
+            style={{ minHeight: "40px", maxHeight: "120px", height: "40px" }}
             rows={1}
             placeholder="예문을 써보세요…"
             value={inputDraft}
             onChange={(e) => {
               setInputDraft(e.target.value);
-              e.target.style.height = "auto";
-              e.target.style.height = `${Math.min(e.target.scrollHeight, 100)}px`;
+              e.target.style.height = "40px";
+              e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`;
             }}
             onKeyDown={handleKeyDown}
           />
           <button
             onClick={handleSend}
             disabled={!inputDraft.trim()}
-            className="w-9 h-9 rounded-full bg-[#fee500] disabled:bg-[#e0e0e0] flex items-center justify-center flex-shrink-0 active:scale-95 transition-all"
+            className="w-9 h-9 rounded-full bg-[#fee500] disabled:bg-[#e0e0e0] flex items-center justify-center flex-shrink-0 active:scale-95 transition-all self-end mb-0.5"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
               <path d="M22 2L11 13" stroke="#1c1c1e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -232,19 +294,20 @@ export default function App() {
         </div>
       )}
 
-      <TabBar />
+      {/* ── TAB BAR ── */}
+      <TabBar tabH={TAB_H} />
     </div>
   );
 }
 
-function HamBubble({ children }: { children: React.ReactNode }) {
+function HamBubble({ children, fs }: { children: React.ReactNode; fs: boolean }) {
   return (
     <div className="flex items-start gap-2 animate-fadeSlideIn">
-      <div className="flex-shrink-0 mt-1">
-        <HamSVG size={36} />
+      <div className="flex-shrink-0 mt-1 leading-none" style={{ fontSize: fs ? "32px" : "26px" }}>
+        🐹
       </div>
       <div className="max-w-[78%]">
-        <p className="text-[11px] font-[500] text-white/80 mb-1">햄글리</p>
+        <p className={`font-[500] text-white/80 mb-1 ${fs ? "text-[13px]" : "text-[11px]"}`}>햄글리</p>
         <div className="bg-white rounded-[18px] rounded-tl-[4px] px-4 py-2.5 shadow-subtle">
           {children}
         </div>
@@ -253,12 +316,14 @@ function HamBubble({ children }: { children: React.ReactNode }) {
   );
 }
 
-function EmptyState() {
+function EmptyState({ fs }: { fs: boolean }) {
   return (
-    <div className="flex-1 flex flex-col items-center justify-center gap-4 py-20">
-      <HamSVG size={60} mood="sleepy" />
+    <div className="flex flex-col items-center justify-center gap-4 py-20">
+      <span style={{ fontSize: "56px" }}>🐹</span>
       <div className="bg-white/80 rounded-[18px] px-5 py-3 text-center">
-        <p className="text-[14px] text-[#555a6a]">아직 추가된 구문이 없어요.<br />노트 탭에서 추가해보세요!</p>
+        <p className={`text-[#555a6a] ${fs ? "text-[17px]" : "text-[14px]"}`}>
+          아직 추가된 구문이 없어요.<br />노트 탭에서 추가해보세요!
+        </p>
       </div>
     </div>
   );

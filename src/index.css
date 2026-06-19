@@ -56,6 +56,20 @@ body {
   overflow-x: hidden;
 }
 
+/* Large font mode — applied to <body> via JS */
+body.font-large {
+  font-size: 18px;
+}
+body.font-large p,
+body.font-large span,
+body.font-large button,
+body.font-large input,
+body.font-large textarea,
+body.font-large label {
+  font-size: 1.2em;
+}
+body.font-large h1, body.font-large .text-lg { font-size: 1.25em; }
+
 @layer components {
   /* Miro-style text input */
   .input-base {

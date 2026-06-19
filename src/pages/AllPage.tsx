@@ -23,7 +23,7 @@ export default function AllPage() {
     : entries;
 
   return (
-    <div className="min-h-screen bg-surface flex flex-col" style={{ paddingBottom: "calc(56px + env(safe-area-inset-bottom))" }}>
+    <div className="min-h-screen bg-surface flex flex-col" style={{ paddingBottom: "calc(48px + env(safe-area-inset-bottom))" }}>
       {/* Header */}
       <header className="flex items-center justify-between px-[18px] py-3 bg-canvas border-b border-hairline">
         <span className="text-[18px] font-[700] text-ink">내 구문</span>
