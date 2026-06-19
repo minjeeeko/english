@@ -4,26 +4,39 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Sweet', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans: ['"Gothic A1"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        jua: ['"Jua"', 'sans-serif'],
+      },
+      colors: {
+        ink: "#2e3338",
+        paper: "#f6fbfd",
+        sky: {
+          key: "#34b3e0",
+          deep: "#1f93c2",
+          fill: "#d9f1fb",
+          lite: "#f1fafe",
+          border: "#cfe6f0",
+        },
+        muted: "#9a958c",
+        cream: "#f6e2bd",
       },
       keyframes: {
-        float: {
-          "0%, 100%": { transform: "translateY(0px)" },
-          "50%": { transform: "translateY(-12px)" },
-        },
         fadeSlideIn: {
-          "0%": { opacity: "0", transform: "translateY(-10px)" },
+          "0%": { opacity: "0", transform: "translateY(-8px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
-        pulseRing: {
-          "0%, 100%": { boxShadow: "0 0 0 0 rgba(14,165,233,0.3), 0 0 0 4px rgba(14,165,233,0.1)" },
-          "50%": { boxShadow: "0 0 0 6px rgba(14,165,233,0.15), 0 0 0 10px rgba(14,165,233,0.05)" },
+        fadeIn: {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
         },
       },
       animation: {
-        float: "float 3s ease-in-out infinite",
-        fadeSlideIn: "fadeSlideIn 0.4s ease forwards",
-        "pulse-ring": "pulseRing 2s ease-in-out infinite",
+        fadeSlideIn: "fadeSlideIn 0.3s ease forwards",
+        fadeIn: "fadeIn 0.25s ease forwards",
+      },
+      boxShadow: {
+        sticker: "2px 2px 0 rgba(46,51,56,0.10)",
+        "sticker-md": "3px 3px 0 rgba(46,51,56,0.12)",
       },
     },
   },

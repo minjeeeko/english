@@ -51,66 +51,81 @@ export default function AddPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-stone-800 pb-10">
-      <div className="max-w-lg mx-auto px-4 pt-4">
-        <button onClick={() => navigate("/")} className="mb-4 text-sm text-sky-500 hover:text-sky-700">
-          ← 돌아가기
+    <div className="min-h-screen bg-paper text-ink">
+      {/* Header */}
+      <header className="flex items-center justify-between px-[18px] py-3 border-b border-sky-border bg-paper">
+        <button
+          onClick={() => navigate(-1)}
+          className="w-8 h-8 rounded-full border-2 border-ink bg-white shadow-sticker flex items-center justify-center font-bold active:scale-95 transition-all"
+        >
+          ✕
         </button>
-        <h1 className="text-xl font-bold mb-5 text-stone-900">구문 추가하기</h1>
+        <span className="font-jua text-[21px] text-ink">구문 추가</span>
+        <span className={`text-[15px] font-bold ${phrase.trim() ? "text-sky-deep" : "text-muted"}`}>저장</span>
+      </header>
 
-        <div className="space-y-4">
-          <Field label="영어 구문 *">
-            <input className="input-base" placeholder="e.g. It's not my cup of tea." value={phrase} onChange={(e) => setPhrase(e.target.value)} />
-          </Field>
-
-          <Field label="구문 해석">
-            <input className="input-base" placeholder="e.g. 그건 내 취향이 아니야." value={translation} onChange={(e) => setTranslation(e.target.value)} />
-          </Field>
-
-          <div className="bg-white rounded-xl border border-sky-100 p-4 space-y-3 shadow-sm">
-            <p className="text-xs font-semibold text-sky-500 uppercase tracking-wide">예문</p>
-            <Field label="영어 예문">
-              <input className="input-base" placeholder="e.g. That kind of music is not my cup of tea." value={example} onChange={(e) => setExample(e.target.value)} />
-            </Field>
-            <Field label="예문 해석">
-              <input className="input-base" placeholder="e.g. 그런 음악은 내 취향이 아니야." value={exampleTranslation} onChange={(e) => setExampleTranslation(e.target.value)} />
-            </Field>
-          </div>
-
-          <Field label="상세 설명 (마크다운)">
-            <textarea className="input-base h-24 resize-none" placeholder="뉘앙스, 사용 맥락 등..." value={explanation} onChange={(e) => setExplanation(e.target.value)} />
-          </Field>
-
-          <Field label="유튜브 링크">
-            <input className="input-base" placeholder="https://youtu.be/..." value={youtubeUrl} onChange={(e) => setYoutubeUrl(e.target.value)} />
-          </Field>
-
-          {preview && (
-            <YoutubeClip videoId={preview.id} start={preview.start} end={endSec ? parseInt(endSec, 10) : undefined} />
+      <div className="max-w-lg mx-auto px-[18px] py-[14px] pb-[100px] flex flex-col gap-[14px]">
+        {/* YouTube */}
+        <Field label="유튜브 영상 링크">
+          <input className="input-base" placeholder="https://youtu.be/…" value={youtubeUrl} onChange={(e) => setYoutubeUrl(e.target.value)} />
+          {preview ? (
+            <div className="mt-2">
+              <YoutubeClip videoId={preview.id} start={preview.start} end={endSec ? parseInt(endSec, 10) : undefined} />
+            </div>
+          ) : (
+            <div className="mt-2 aspect-video w-full rounded-[13px] border-2 border-dashed border-sky-border bg-sky-lite flex items-center justify-center text-[14px] text-muted">
+              붙여넣으면 미리보기 ✎
+            </div>
           )}
+        </Field>
 
-          <div className="flex gap-3">
-            <Field label="시작(초)" className="flex-1">
-              <input className="input-base" type="number" placeholder="0" value={startSec} onChange={(e) => setStartSec(e.target.value)} />
-            </Field>
-            <Field label="끝(초)" className="flex-1">
-              <input className="input-base" type="number" placeholder="" value={endSec} onChange={(e) => setEndSec(e.target.value)} />
-            </Field>
-          </div>
-          {endSec && <p className="text-xs text-emerald-500">✓ 구간 반복 가능</p>}
+        <Field label="구문">
+          <input className="input-base" placeholder="break the ice" value={phrase} onChange={(e) => setPhrase(e.target.value)} />
+        </Field>
 
-          <Field label="태그 (쉼표 구분)">
-            <input className="input-base" placeholder="idiom, business, ..." value={tags} onChange={(e) => setTags(e.target.value)} />
+        <Field label="해석">
+          <input className="input-base" placeholder="어색함을 깨다" value={translation} onChange={(e) => setTranslation(e.target.value)} />
+        </Field>
+
+        <Field label="상세 설명">
+          <textarea className="input-base resize-none" style={{ minHeight: "58px" }} placeholder="뉘앙스, 사용 맥락 등…" value={explanation} onChange={(e) => setExplanation(e.target.value)} />
+        </Field>
+
+        {/* Examples */}
+        <div className="rounded-[14px] border-2 border-sky-border bg-sky-lite p-4 flex flex-col gap-3">
+          <p className="text-[15px] font-[700] text-ink">예문 · 예문 해석</p>
+          <Field label="예문 (영어)">
+            <input className="input-base" placeholder="That kind of music is not my cup of tea." value={example} onChange={(e) => setExample(e.target.value)} />
           </Field>
-
-          <button
-            onClick={handleSave}
-            disabled={!phrase.trim() || saving}
-            className="w-full bg-sky-500 hover:bg-sky-600 disabled:opacity-40 text-white rounded-xl py-3 font-semibold active:scale-95 transition-all mt-2 shadow-sm"
-          >
-            {saving ? "저장 중..." : "저장"}
-          </button>
+          <Field label="예문 해석 (한국어)">
+            <input className="input-base" placeholder="그런 음악은 내 취향이 아니야." value={exampleTranslation} onChange={(e) => setExampleTranslation(e.target.value)} />
+          </Field>
         </div>
+
+        {/* Timestamps */}
+        <div className="flex gap-3">
+          <Field label="시작(초)" className="flex-1">
+            <input className="input-base" type="number" placeholder="0" value={startSec} onChange={(e) => setStartSec(e.target.value)} />
+          </Field>
+          <Field label="끝(초)" className="flex-1">
+            <input className="input-base" type="number" placeholder="–" value={endSec} onChange={(e) => setEndSec(e.target.value)} />
+          </Field>
+        </div>
+
+        <Field label="태그 (쉼표 구분)">
+          <input className="input-base" placeholder="idiom, business, …" value={tags} onChange={(e) => setTags(e.target.value)} />
+        </Field>
+      </div>
+
+      {/* Fixed save button */}
+      <div className="fixed bottom-0 left-0 right-0 bg-paper border-t border-sky-border px-[18px] py-4" style={{ paddingBottom: "max(16px, env(safe-area-inset-bottom))" }}>
+        <button
+          onClick={handleSave}
+          disabled={!phrase.trim() || saving}
+          className="btn-sky w-full py-4 text-[16px] disabled:opacity-40"
+        >
+          {saving ? "저장 중…" : "저장하기"}
+        </button>
       </div>
     </div>
   );
@@ -119,7 +134,7 @@ export default function AddPage() {
 function Field({ label, children, className = "" }: { label: string; children: React.ReactNode; className?: string }) {
   return (
     <div className={className}>
-      <label className="block text-sm text-stone-500 mb-1 font-medium">{label}</label>
+      <label className="block text-[15px] font-[700] text-ink mb-1.5">{label}</label>
       {children}
     </div>
   );

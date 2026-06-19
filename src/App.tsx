@@ -1,135 +1,164 @@
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Mascot } from "./components/Mascot";
-import { pickPhrase } from "./lib/entries";
+import { listEntries } from "./lib/entries";
 import type { Entry } from "./lib/entries";
+import { HamSVG } from "./components/HamSVG";
+import { TabBar } from "./components/TabBar";
 import { requestNotificationPermission, scheduleNotifications } from "./lib/notifications";
 
-const CHEERS = [
-  "영어 공부를 하다니 대단한데?! 🌟",
-  "그만 만지고 공부하자 😤",
-  "끼양 🐹",
-  "오늘도 열심히! 💪",
-  "영어 실력이 쑥쑥! 🌱",
-];
+function todayStr() {
+  return new Date().toLocaleDateString("ko-KR", { month: "long", day: "numeric", weekday: "short" });
+}
 
 export default function App() {
   const navigate = useNavigate();
-  const [entry, setEntry] = useState<Entry | null>(null);
+  const [entries, setEntries] = useState<Entry[]>([]);
+  const [quizIndex, setQuizIndex] = useState(0);
+  const [showAnswer, setShowAnswer] = useState(false);
+  const [userAnswer, setUserAnswer] = useState("");
   const [loading, setLoading] = useState(true);
-  const [fabOpen, setFabOpen] = useState(false);
-  const [bubbleKey, setBubbleKey] = useState(0);
-  const [petted, setPetted] = useState(false);
-  const [cheerMsg, setCheerMsg] = useState<string | null>(null);
 
-  const fetchPhrase = useCallback(async () => {
+  const fetchEntries = useCallback(async () => {
     setLoading(true);
     try {
-      const e = await pickPhrase();
-      setEntry(e);
-      setBubbleKey((k) => k + 1);
+      const data = await listEntries({ sort: "due_date" });
+      setEntries(data);
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    fetchPhrase();
+    fetchEntries();
     requestNotificationPermission().then((granted) => {
       if (granted) scheduleNotifications();
     });
-  }, [fetchPhrase]);
+  }, [fetchEntries]);
 
-  const handlePet = () => {
-    if (petted) return;
-    setPetted(true);
-    const msg = CHEERS[Math.floor(Math.random() * CHEERS.length)];
-    setCheerMsg(msg);
-    setBubbleKey((k) => k + 1);
-    setTimeout(() => {
-      setPetted(false);
-      setCheerMsg(null);
-      setBubbleKey((k) => k + 1);
-    }, 2200);
+  const entry = entries[quizIndex] ?? null;
+  const total = entries.length;
+
+  const goNext = () => {
+    setQuizIndex((i) => (i + 1) % Math.max(total, 1));
+    setShowAnswer(false);
+    setUserAnswer("");
+  };
+  const goPrev = () => {
+    setQuizIndex((i) => (i - 1 + Math.max(total, 1)) % Math.max(total, 1));
+    setShowAnswer(false);
+    setUserAnswer("");
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-white">
-      {/* Subtle background blobs */}
-      <div className="absolute top-0 left-1/4 w-80 h-80 bg-sky-50 rounded-full blur-3xl opacity-70 pointer-events-none" />
-      <div className="absolute bottom-10 right-1/4 w-64 h-64 bg-orange-50 rounded-full blur-3xl opacity-50 pointer-events-none" />
+    <div className="min-h-screen bg-paper flex flex-col pb-[80px]">
+      {/* Header */}
+      <header className="flex items-center justify-between px-[18px] py-3 border-b border-sky-border bg-paper">
+        <div className="flex items-center gap-2">
+          <HamSVG size={34} />
+          <span className="font-jua text-[24px] text-ink leading-none">햄글리시</span>
+        </div>
+        <span className="text-[13px] text-muted">{todayStr()}</span>
+      </header>
 
-      <div className="relative z-10 flex flex-col items-center px-4 w-full max-w-sm -mt-12">
-        {/* Speech bubble */}
-        <div className="w-full mb-2">
-          {!loading ? (
-            <div key={bubbleKey} className="animate-fadeSlideIn w-full">
-              {cheerMsg ? (
-                <div className="bg-white text-stone-800 rounded-2xl p-4 shadow-md border border-sky-100 text-center">
-                  <p className="text-base font-semibold">{cheerMsg}</p>
-                </div>
-              ) : entry ? (
+      {/* Scroll area */}
+      <div className="flex-1 overflow-y-auto px-[18px] py-[14px] flex flex-col gap-[14px]">
+        {loading ? (
+          <div className="flex-1 flex items-center justify-center text-muted text-sm">불러오는 중...</div>
+        ) : entries.length === 0 ? (
+          <EmptyState />
+        ) : (
+          <>
+            {/* Mascot quiz bubble */}
+            <div className="flex items-start gap-3">
+              <HamSVG size={60} />
+              <div className="flex-1 relative bg-[#fff6e2] rounded-[16px] border-2 border-ink shadow-sticker p-3">
+                {/* bubble tail */}
+                <div className="absolute -left-[10px] top-4 w-0 h-0 border-t-[7px] border-b-[7px] border-r-[10px] border-t-transparent border-b-transparent border-r-ink" />
+                <div className="absolute -left-[7px] top-[17px] w-0 h-0 border-t-[6px] border-b-[6px] border-r-[9px] border-t-transparent border-b-transparent border-r-[#fff6e2]" />
+                <p className="text-[16px] font-[800] text-ink">안녕! 오늘도 한 입 🐾</p>
+                <p className="text-[14px] text-muted mt-0.5">이 구문으로 예문을 만들어줘!</p>
+              </div>
+            </div>
+
+            {/* Progress */}
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-[14px] font-[700] text-sky-deep">오늘의 퀴즈</span>
+                <span className="text-[13px] text-muted">{quizIndex + 1} / {total}</span>
+              </div>
+              <div className="h-[9px] rounded-full bg-white border-2 border-ink overflow-hidden">
                 <div
-                  className="bg-white text-stone-800 rounded-2xl p-4 shadow-md border border-sky-100 cursor-pointer active:scale-[0.98] transition-transform animate-pulse-ring"
-                  onClick={() => navigate(`/study/${entry.id}`, { state: { entry } })}
-                >
-                  <p className="text-lg font-bold leading-snug mb-1">{entry.phrase}</p>
-                  {entry.translation && (
-                    <p className="text-sm text-stone-500">{entry.translation}</p>
-                  )}
-                </div>
-              ) : (
-                <div className="bg-white text-stone-800 rounded-2xl p-4 shadow-md border border-sky-100 text-center">
-                  <p className="text-base font-medium text-stone-500">아직 추가된 구문이 없어요</p>
-                  <p className="text-sm text-sky-400 mt-1">우측 하단 + 버튼으로 추가해보세요!</p>
-                </div>
+                  className="h-full bg-sky-key transition-all duration-300"
+                  style={{ width: `${((quizIndex + 1) / total) * 100}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Phrase card */}
+            <div
+              className="bg-sky-fill rounded-[16px] border-2 border-ink shadow-sticker p-[18px] text-center cursor-pointer active:scale-[0.99] transition-transform"
+              onClick={() => navigate(`/study/${entry.id}`, { state: { entry } })}
+            >
+              <p className="text-[28px] font-[800] text-ink leading-tight">{entry.phrase}</p>
+              {entry.translation && (
+                <p className="text-[15px] text-muted mt-1">{entry.translation}</p>
               )}
             </div>
-          ) : (
-            <div className="h-24" />
-          )}
-        </div>
 
-        {/* Mascot + button pushed lower */}
-        <div className="flex flex-col items-center gap-3 mt-16">
-          <Mascot petted={petted} onClick={handlePet} />
+            {/* Answer input */}
+            <div className="card p-3">
+              <textarea
+                className="w-full bg-transparent text-ink placeholder-[#b8b3a8] text-[15px] resize-none focus:outline-none"
+                style={{ minHeight: "88px" }}
+                placeholder="영어로 예문을 써보세요…"
+                value={userAnswer}
+                onChange={(e) => setUserAnswer(e.target.value)}
+              />
+            </div>
 
-          {!loading && !cheerMsg && (
-            <button
-              onClick={fetchPhrase}
-              className="text-sm text-sky-500 hover:text-sky-700 transition-colors border border-sky-200 rounded-full px-4 py-1.5 bg-white shadow-sm active:scale-95"
-            >
-              다른 예문 보기
-            </button>
-          )}
-        </div>
-      </div>
+            {/* Model answer toggle */}
+            {!showAnswer ? (
+              <button
+                className="btn-white py-3 px-6 w-full text-[15px]"
+                onClick={() => setShowAnswer(true)}
+              >
+                햄글리 모범 답안 보기 👀
+              </button>
+            ) : (
+              <div className="rounded-[16px] border-2 border-dashed border-sky-key bg-sky-lite p-4 animate-fadeIn">
+                <p className="text-[13px] font-[800] text-sky-deep mb-2">햄글리의 예문</p>
+                {entry.example ? (
+                  <>
+                    <p className="text-[16px] font-[700] text-ink">"{entry.example}"</p>
+                    {entry.example_translation && (
+                      <p className="text-[14px] text-muted mt-1">{entry.example_translation}</p>
+                    )}
+                  </>
+                ) : (
+                  <p className="text-[14px] text-muted">등록된 모범 답안이 없어요.</p>
+                )}
+              </div>
+            )}
 
-      {/* FAB */}
-      <div className="fixed bottom-8 right-6 flex flex-col items-end gap-3 z-20">
-        {fabOpen && (
-          <>
-            <button
-              onClick={() => { setFabOpen(false); navigate("/all"); }}
-              className="flex items-center gap-2 bg-white text-stone-700 px-4 py-2 rounded-full shadow-lg text-sm animate-fadeSlideIn border border-stone-200 hover:bg-stone-50 active:scale-95 transition-all"
-            >
-              📚 전체 구문 보기
-            </button>
-            <button
-              onClick={() => { setFabOpen(false); navigate("/add"); }}
-              className="flex items-center gap-2 bg-sky-500 text-white px-4 py-2 rounded-full shadow-lg text-sm animate-fadeSlideIn hover:bg-sky-600 active:scale-95 transition-all"
-            >
-              ✏️ 구문 추가하기
-            </button>
+            {/* Prev / Next */}
+            <div className="flex gap-3">
+              <button className="btn-white flex-1 py-3 text-[15px]" onClick={goPrev}>‹ 이전</button>
+              <button className="btn-sky flex-1 py-3 text-[15px]" onClick={goNext}>다음 문제 ›</button>
+            </div>
           </>
         )}
-        <button
-          onClick={() => setFabOpen((o) => !o)}
-          className="w-14 h-14 rounded-full bg-sky-500 text-white shadow-xl flex items-center justify-center text-2xl font-light hover:bg-sky-600 active:scale-95 transition-all"
-        >
-          {fabOpen ? "×" : "+"}
-        </button>
       </div>
+
+      <TabBar />
+    </div>
+  );
+}
+
+function EmptyState() {
+  return (
+    <div className="flex-1 flex flex-col items-center justify-center gap-4 py-16">
+      <HamSVG size={56} mood="sleepy" />
+      <p className="text-[15px] text-muted text-center">아직 추가된 구문이 없어요.<br />아래 + 버튼으로 추가해보세요!</p>
     </div>
   );
 }

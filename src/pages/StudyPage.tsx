@@ -28,13 +28,13 @@ export default function StudyPage() {
 
   const handleNext = async () => {
     const next = await pickPhrase();
-    if (next) navigate(`/study/${next.id}`);
+    if (next) navigate(`/study/${next.id}`, { state: { entry: next } });
     else navigate("/");
   };
 
   if (!entry) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center text-stone-400">
+      <div className="min-h-screen bg-paper flex items-center justify-center text-muted">
         불러오는 중...
       </div>
     );
@@ -43,15 +43,21 @@ export default function StudyPage() {
   const ytData = entry.youtube_url ? parseYoutube(entry.youtube_url) : null;
 
   return (
-    <div className="min-h-screen bg-white text-stone-800 pb-8">
-      <div className="max-w-lg mx-auto px-4 pt-4">
-        <button
-          onClick={() => navigate("/")}
-          className="mb-4 text-sm text-sky-500 hover:text-sky-700 flex items-center gap-1"
-        >
-          ← 홈으로
-        </button>
+    <div className="min-h-screen bg-paper text-ink pb-8">
+      <div className="max-w-lg mx-auto px-[18px] pt-4">
+        {/* Top bar */}
+        <div className="flex items-center justify-between mb-4">
+          <button
+            onClick={() => navigate(-1)}
+            className="w-9 h-9 rounded-full border-2 border-ink bg-white shadow-sticker flex items-center justify-center text-ink font-bold active:scale-95 transition-all"
+          >
+            ‹
+          </button>
+          <span className="text-[14px] text-muted">복습 {entry.review_count}회</span>
+          <div className="w-9" />
+        </div>
 
+        {/* YouTube */}
         {ytData?.id ? (
           <YoutubeClip
             videoId={ytData.id}
@@ -60,77 +66,79 @@ export default function StudyPage() {
             loop={true}
           />
         ) : (
-          <div className="aspect-video w-full bg-stone-100 rounded-xl flex items-center justify-center text-stone-400 text-sm border border-stone-200">
-            유튜브 링크 없음
+          <div className="aspect-video w-full bg-sky-fill rounded-[16px] border-2 border-ink flex flex-col items-center justify-center text-muted text-sm gap-2 shadow-sticker">
+            <span className="text-[32px]">▶</span>
+            <span>유튜브 링크 없음</span>
           </div>
         )}
 
-        <div className="mt-5 space-y-3">
+        <div className="mt-4 flex flex-col gap-3">
           {/* Phrase */}
-          <div className="bg-white rounded-xl p-4 shadow-sm border border-sky-100">
-            <p className="text-xl font-bold text-stone-900">{entry.phrase}</p>
-            {entry.translation && (
-              <p className="text-stone-500 mt-1">{entry.translation}</p>
-            )}
+          <div>
+            <p className="text-[13px] font-[800] text-sky-deep uppercase tracking-wide mb-1">구문</p>
+            <p className="text-[27px] font-[800] text-ink leading-tight">{entry.phrase}</p>
           </div>
 
-          {/* Explanation */}
-          {entry.explanation && (
-            <div className="bg-white rounded-xl p-4 shadow-sm border border-stone-100 prose prose-stone prose-sm max-w-none">
-              <ReactMarkdown>{entry.explanation}</ReactMarkdown>
+          {/* Translation */}
+          {entry.translation && (
+            <div className="card p-4">
+              <p className="text-[13px] font-[800] text-sky-deep mb-1">해석</p>
+              <p className="text-[18px] text-ink">{entry.translation}</p>
             </div>
           )}
 
-          {/* Example sentence */}
+          {/* Explanation */}
+          {entry.explanation && (
+            <div className="card p-4">
+              <p className="text-[13px] font-[800] text-sky-deep mb-2">상세 설명</p>
+              <div className="prose prose-sm max-w-none text-ink text-[16px] leading-relaxed">
+                <ReactMarkdown>{entry.explanation}</ReactMarkdown>
+              </div>
+            </div>
+          )}
+
+          {/* Example */}
           {(entry.example || entry.example_translation) && (
-            <div className="bg-sky-50 rounded-xl p-4 border border-sky-100">
-              <p className="text-xs font-semibold text-sky-500 uppercase tracking-wide mb-2">예문</p>
+            <div className="rounded-[16px] border-2 border-dashed border-sky-key bg-sky-lite p-4">
+              <p className="text-[13px] font-[800] text-sky-deep mb-2">예문</p>
               {entry.example && (
-                <p className="text-stone-700 font-medium italic">"{entry.example}"</p>
+                <p className="text-[16px] font-[700] text-ink">"{entry.example}"</p>
               )}
               {entry.example_translation && (
-                <p className="text-stone-500 text-sm mt-1">{entry.example_translation}</p>
+                <p className="text-[14px] text-muted mt-1">{entry.example_translation}</p>
               )}
             </div>
           )}
         </div>
 
+        {/* Grade buttons */}
         {!graded ? (
           <div className="mt-6 flex gap-3">
             <button
               onClick={() => handleGrade(true)}
-              className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl py-3 font-semibold active:scale-95 transition-all shadow-sm"
+              className="flex-1 btn-sky py-3 text-[15px]"
             >
               ✅ 기억남
             </button>
             <button
               onClick={() => handleGrade(false)}
-              className="flex-1 bg-rose-400 hover:bg-rose-500 text-white rounded-xl py-3 font-semibold active:scale-95 transition-all shadow-sm"
+              className="flex-1 btn-white py-3 text-[15px] border-rose-400 text-rose-500"
             >
               🤔 헷갈림
             </button>
           </div>
         ) : (
           <div className="mt-6 flex gap-3">
-            <button
-              onClick={() => navigate("/")}
-              className="flex-1 bg-white hover:bg-stone-50 text-stone-700 rounded-xl py-3 font-semibold active:scale-95 transition-all border border-stone-200"
-            >
-              홈으로
-            </button>
-            <button
-              onClick={handleNext}
-              className="flex-1 bg-sky-500 hover:bg-sky-600 text-white rounded-xl py-3 font-semibold active:scale-95 transition-all shadow-sm"
-            >
-              다음 예문 →
-            </button>
+            <button onClick={() => navigate("/")} className="flex-1 btn-white py-3 text-[15px]">홈으로</button>
+            <button onClick={handleNext} className="flex-1 btn-sky py-3 text-[15px]">다음 예문 ›</button>
           </div>
         )}
 
+        {/* Tags */}
         {entry.tags.length > 0 && (
           <div className="mt-4 flex flex-wrap gap-2">
             {entry.tags.map((t) => (
-              <span key={t} className="text-xs bg-sky-50 text-sky-500 rounded-full px-2 py-0.5 border border-sky-100">
+              <span key={t} className="text-[12px] bg-sky-lite text-sky-deep rounded-full px-3 py-0.5 border border-sky-border font-bold">
                 {t}
               </span>
             ))}
