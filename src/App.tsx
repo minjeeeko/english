@@ -8,7 +8,20 @@ import { TabBar } from "./components/TabBar";
 import { requestNotificationPermission, scheduleNotifications } from "./lib/notifications";
 import { useFontSize } from "./lib/fontsize";
 
-function todayStr() {
+const GREETINGS = [
+  "오늘도 영어 공부를 해볼까요? 🌟",
+  "하루 한 구문, 꾸준히 하면 달라져요! 💪",
+  "오늘도 햄글리와 함께해요 🐹",
+  "영어 실력은 매일 조금씩 쌓이는 거예요 ✨",
+  "오늘의 구문으로 예문을 만들어봐요! 📝",
+  "잠깐이라도 영어 한 문장, 어때요? 😊",
+  "오늘 하루도 화이팅! 🎉",
+  "꾸준함이 실력이 돼요, 오늘도 고고! 🚀",
+  "딱 한 구문만 해봐요, 금방이에요! ⏱️",
+  "영어 한 입, 오늘도 맛있게 드세요 🍀",
+];
+
+
   return new Date().toLocaleDateString("ko-KR", { month: "long", day: "numeric", weekday: "short" });
 }
 
@@ -75,6 +88,7 @@ export default function App({ nickname }: { nickname: string }) {
   const entry = entries[quizIndex] ?? null;
   const total = entries.length;
   const fs = fontSize === "large";
+  const greeting = GREETINGS[quizIndex % GREETINGS.length];
 
   const handleSend = () => {
     if (!inputDraft.trim()) return;
@@ -162,9 +176,18 @@ export default function App({ nickname }: { nickname: string }) {
         </div>
       </header>
 
-      {/* ── PHRASE CARD (pinned, never scrolls away) ── */}
+      {/* ── GREETING BUBBLE ── */}
       {!loading && entry && (
         <div className="flex-shrink-0 px-3 pt-3 pb-1">
+          <HamBubble fs={fs}>
+            <p className={`text-[#1c1c1e] ${fs ? "text-[16px]" : "text-[14px]"}`}>{greeting}</p>
+          </HamBubble>
+        </div>
+      )}
+
+      {/* ── PHRASE CARD (pinned, never scrolls away) ── */}
+      {!loading && entry && (
+        <div className="flex-shrink-0 px-3 pt-1 pb-1">
           <HamBubble fs={fs}>
             <div
               className="cursor-pointer active:opacity-80 transition-opacity"
