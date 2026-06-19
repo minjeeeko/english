@@ -21,7 +21,7 @@ const GREETINGS = [
   "영어 한 입, 오늘도 맛있게 드세요 🍀",
 ];
 
-
+function todayStr() {
   return new Date().toLocaleDateString("ko-KR", { month: "long", day: "numeric", weekday: "short" });
 }
 
