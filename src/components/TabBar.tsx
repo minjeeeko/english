@@ -8,39 +8,34 @@ export function TabBar() {
   const isNote = pathname === "/all";
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-30 bg-paper border-t-2 border-ink flex items-center justify-around px-6 pb-safe"
-      style={{ paddingBottom: "max(16px, env(safe-area-inset-bottom))", paddingTop: "9px" }}>
-      {/* Home */}
-      <button
+    <nav
+      className="fixed bottom-0 left-0 right-0 z-30 bg-canvas border-t border-hairline flex items-center justify-around"
+      style={{ paddingBottom: "max(16px, env(safe-area-inset-bottom))", paddingTop: "10px" }}
+    >
+      <TabItem
+        label="홈"
+        icon="🏠"
+        active={isHome}
         onClick={() => navigate("/")}
-        className="flex flex-col items-center gap-0.5"
-      >
-        <div className={`w-[23px] h-[23px] rounded-lg border-2 flex items-center justify-center text-sm
-          ${isHome ? "border-sky-key bg-sky-lite" : "border-ink bg-transparent"}`}>
-          🏠
-        </div>
-        <span className={`text-[12px] font-bold ${isHome ? "text-sky-deep" : "text-muted"}`}>홈</span>
-      </button>
-
-      {/* Add (center) */}
-      <button
-        onClick={() => navigate("/add")}
-        className="w-[50px] h-[50px] rounded-full bg-sky-key border-[2.5px] border-ink shadow-sticker-md flex items-center justify-center -mt-3 active:scale-95 transition-all"
-      >
-        <span className="text-white text-[28px] font-light leading-none">+</span>
-      </button>
-
-      {/* Note */}
-      <button
+      />
+      <TabItem
+        label="노트"
+        icon="📚"
+        active={isNote}
         onClick={() => navigate("/all")}
-        className="flex flex-col items-center gap-0.5"
-      >
-        <div className={`w-[23px] h-[23px] rounded-lg border-2 flex items-center justify-center text-sm
-          ${isNote ? "border-sky-key bg-sky-lite" : "border-ink bg-transparent"}`}>
-          📚
-        </div>
-        <span className={`text-[12px] font-bold ${isNote ? "text-sky-deep" : "text-muted"}`}>노트</span>
-      </button>
+      />
     </nav>
+  );
+}
+
+function TabItem({ label, icon, active, onClick }: { label: string; icon: string; active: boolean; onClick: () => void }) {
+  return (
+    <button onClick={onClick} className="flex flex-col items-center gap-1 px-8 py-1">
+      <span className="text-[22px] leading-none">{icon}</span>
+      <span className={`text-[11px] font-[600] tracking-wide ${active ? "text-accent" : "text-steel"}`}>
+        {label}
+      </span>
+      {active && <div className="w-4 h-[2px] bg-accent rounded-full" />}
+    </button>
   );
 }

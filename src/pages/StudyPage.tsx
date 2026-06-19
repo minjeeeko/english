@@ -16,13 +16,17 @@ export default function StudyPage() {
   useEffect(() => {
     if (!id) return;
     setGraded(false);
-    getEntry(id).then(setEntry);
+    // Fetch in background to get fresh data (e.g. updated review_count)
+    // but don't reset entry to null to avoid flash
+    getEntry(id).then((e) => { if (e) setEntry(e); });
   }, [id]);
 
   const handleGrade = async (ok: boolean) => {
     if (!entry) return;
+    // review_count increments ONLY here — on explicit grade button press
     const patch = gradeEntry(entry, ok);
-    await updateEntry(entry.id, patch);
+    const updated = await updateEntry(entry.id, patch);
+    setEntry(updated);
     setGraded(true);
   };
 
@@ -34,8 +38,8 @@ export default function StudyPage() {
 
   if (!entry) {
     return (
-      <div className="min-h-screen bg-paper flex items-center justify-center text-muted">
-        불러오는 중...
+      <div className="min-h-screen bg-surface flex items-center justify-center text-muted text-[14px]">
+        불러오는 중…
       </div>
     );
   }
@@ -43,18 +47,17 @@ export default function StudyPage() {
   const ytData = entry.youtube_url ? parseYoutube(entry.youtube_url) : null;
 
   return (
-    <div className="min-h-screen bg-paper text-ink pb-8">
+    <div className="min-h-screen bg-surface text-ink pb-10">
       <div className="max-w-lg mx-auto px-[18px] pt-4">
         {/* Top bar */}
         <div className="flex items-center justify-between mb-4">
           <button
             onClick={() => navigate(-1)}
-            className="w-9 h-9 rounded-full border-2 border-ink bg-white shadow-sticker flex items-center justify-center text-ink font-bold active:scale-95 transition-all"
+            className="flex items-center gap-1 text-[14px] text-steel font-[500] active:text-ink"
           >
-            ‹
+            ‹ 뒤로
           </button>
-          <span className="text-[14px] text-muted">복습 {entry.review_count}회</span>
-          <div className="w-9" />
+          <span className="text-[13px] text-muted font-[500]">복습 {entry.review_count}회</span>
         </div>
 
         {/* YouTube */}
@@ -66,32 +69,32 @@ export default function StudyPage() {
             loop={true}
           />
         ) : (
-          <div className="aspect-video w-full bg-sky-fill rounded-[16px] border-2 border-ink flex flex-col items-center justify-center text-muted text-sm gap-2 shadow-sticker">
-            <span className="text-[32px]">▶</span>
+          <div className="aspect-video w-full bg-accent-fill rounded-xl border border-hairline-soft flex flex-col items-center justify-center text-slate text-[14px] gap-2 shadow-subtle">
+            <span className="text-[28px]">▶</span>
             <span>유튜브 링크 없음</span>
           </div>
         )}
 
-        <div className="mt-4 flex flex-col gap-3">
+        <div className="mt-5 flex flex-col gap-3">
           {/* Phrase */}
           <div>
-            <p className="text-[13px] font-[800] text-sky-deep uppercase tracking-wide mb-1">구문</p>
-            <p className="text-[27px] font-[800] text-ink leading-tight">{entry.phrase}</p>
+            <p className="text-[11px] font-[600] text-accent uppercase tracking-widest mb-1">구문</p>
+            <p className="text-[26px] font-[800] text-ink leading-tight">{entry.phrase}</p>
           </div>
 
           {/* Translation */}
           {entry.translation && (
-            <div className="card p-4">
-              <p className="text-[13px] font-[800] text-sky-deep mb-1">해석</p>
-              <p className="text-[18px] text-ink">{entry.translation}</p>
+            <div className="bg-canvas rounded-xl border border-hairline-soft shadow-subtle p-4">
+              <p className="text-[11px] font-[600] text-accent-deep uppercase tracking-widest mb-1.5">해석</p>
+              <p className="text-[17px] text-ink font-[400]">{entry.translation}</p>
             </div>
           )}
 
           {/* Explanation */}
           {entry.explanation && (
-            <div className="card p-4">
-              <p className="text-[13px] font-[800] text-sky-deep mb-2">상세 설명</p>
-              <div className="prose prose-sm max-w-none text-ink text-[16px] leading-relaxed">
+            <div className="bg-canvas rounded-xl border border-hairline-soft shadow-subtle p-4">
+              <p className="text-[11px] font-[600] text-accent-deep uppercase tracking-widest mb-2">상세 설명</p>
+              <div className="prose prose-sm max-w-none text-ink text-[15px] leading-relaxed">
                 <ReactMarkdown>{entry.explanation}</ReactMarkdown>
               </div>
             </div>
@@ -99,38 +102,38 @@ export default function StudyPage() {
 
           {/* Example */}
           {(entry.example || entry.example_translation) && (
-            <div className="rounded-[16px] border-2 border-dashed border-sky-key bg-sky-lite p-4">
-              <p className="text-[13px] font-[800] text-sky-deep mb-2">예문</p>
+            <div className="bg-accent-lite rounded-xl border border-dashed border-accent p-4">
+              <p className="text-[11px] font-[600] text-accent-deep uppercase tracking-widest mb-2">예문</p>
               {entry.example && (
-                <p className="text-[16px] font-[700] text-ink">"{entry.example}"</p>
+                <p className="text-[15px] font-[700] text-ink">"{entry.example}"</p>
               )}
               {entry.example_translation && (
-                <p className="text-[14px] text-muted mt-1">{entry.example_translation}</p>
+                <p className="text-[13px] text-slate mt-1">{entry.example_translation}</p>
               )}
             </div>
           )}
         </div>
 
-        {/* Grade buttons */}
+        {/* Grade — review_count only increments when these buttons are pressed */}
         {!graded ? (
           <div className="mt-6 flex gap-3">
             <button
               onClick={() => handleGrade(true)}
-              className="flex-1 btn-sky py-3 text-[15px]"
+              className="flex-1 btn-primary py-3 text-[15px]"
             >
               ✅ 기억남
             </button>
             <button
               onClick={() => handleGrade(false)}
-              className="flex-1 btn-white py-3 text-[15px] border-rose-400 text-rose-500"
+              className="flex-1 btn-secondary py-3 text-[15px] text-[#c0392b] border-[#e0b0b0]"
             >
               🤔 헷갈림
             </button>
           </div>
         ) : (
           <div className="mt-6 flex gap-3">
-            <button onClick={() => navigate("/")} className="flex-1 btn-white py-3 text-[15px]">홈으로</button>
-            <button onClick={handleNext} className="flex-1 btn-sky py-3 text-[15px]">다음 예문 ›</button>
+            <button onClick={() => navigate("/")} className="flex-1 btn-secondary py-3 text-[15px]">홈으로</button>
+            <button onClick={handleNext} className="flex-1 btn-primary py-3 text-[15px]">다음 예문 ›</button>
           </div>
         )}
 
@@ -138,7 +141,7 @@ export default function StudyPage() {
         {entry.tags.length > 0 && (
           <div className="mt-4 flex flex-wrap gap-2">
             {entry.tags.map((t) => (
-              <span key={t} className="text-[12px] bg-sky-lite text-sky-deep rounded-full px-3 py-0.5 border border-sky-border font-bold">
+              <span key={t} className="text-[12px] bg-surface text-steel rounded-full px-3 py-0.5 border border-hairline font-[500]">
                 {t}
               </span>
             ))}

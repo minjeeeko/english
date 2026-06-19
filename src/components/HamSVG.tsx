@@ -3,36 +3,45 @@ type Props = { size?: number; mood?: "normal" | "sleepy" };
 export function HamSVG({ size = 60, mood = "normal" }: Props) {
   return (
     <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-      {/* Ears */}
-      <circle cx="24" cy="26" r="13" fill="#f6e2bd" stroke="#2e3338" strokeWidth="3" />
-      <circle cx="24" cy="26" r="6" fill="#ffd0d6" />
-      <circle cx="76" cy="26" r="13" fill="#f6e2bd" stroke="#2e3338" strokeWidth="3" />
-      <circle cx="76" cy="26" r="6" fill="#ffd0d6" />
-      {/* Face */}
-      <ellipse cx="50" cy="56" rx="38" ry="34" fill="#f6e2bd" stroke="#2e3338" strokeWidth="3" />
-      {/* Mouth area */}
-      <ellipse cx="50" cy="66" rx="18" ry="11" fill="#fff7e8" />
-      {/* Cheeks */}
-      <ellipse cx="23" cy="66" rx="8" ry="5" fill="#ffc2cb" opacity="0.7" />
-      <ellipse cx="77" cy="66" rx="8" ry="5" fill="#ffc2cb" opacity="0.7" />
-      {/* Eyes */}
+      {/* Ears — small and close together on top */}
+      <ellipse cx="33" cy="22" rx="10" ry="9" fill="#f0c8a0" stroke="#1c1c1e" strokeWidth="2.5" />
+      <ellipse cx="33" cy="23" rx="5" ry="4.5" fill="#f4a0b0" />
+      <ellipse cx="67" cy="22" rx="10" ry="9" fill="#f0c8a0" stroke="#1c1c1e" strokeWidth="2.5" />
+      <ellipse cx="67" cy="23" rx="5" ry="4.5" fill="#f4a0b0" />
+
+      {/* Cheek pouches — the defining hamster feature, very round and prominent */}
+      <ellipse cx="17" cy="62" rx="15" ry="16" fill="#f5ddb8" stroke="#1c1c1e" strokeWidth="2.5" />
+      <ellipse cx="83" cy="62" rx="15" ry="16" fill="#f5ddb8" stroke="#1c1c1e" strokeWidth="2.5" />
+
+      {/* Main face — wide and round, sits on top of the cheeks */}
+      <ellipse cx="50" cy="54" rx="32" ry="30" fill="#f5ddb8" stroke="#1c1c1e" strokeWidth="2.5" />
+
+      {/* Belly / mouth area — lighter patch */}
+      <ellipse cx="50" cy="66" rx="18" ry="13" fill="#fff8ee" />
+
+      {/* Eyes — small and beady */}
       {mood === "normal" ? (
         <>
-          <circle cx="37" cy="54" r="5" fill="#2e3338" />
-          <circle cx="63" cy="54" r="5" fill="#2e3338" />
-          <circle cx="39" cy="52" r="1.5" fill="white" />
-          <circle cx="65" cy="52" r="1.5" fill="white" />
+          <circle cx="39" cy="50" r="4.5" fill="#1c1c1e" />
+          <circle cx="61" cy="50" r="4.5" fill="#1c1c1e" />
+          <circle cx="40.5" cy="48.5" r="1.5" fill="white" />
+          <circle cx="62.5" cy="48.5" r="1.5" fill="white" />
         </>
       ) : (
         <>
-          <line x1="32" y1="54" x2="42" y2="54" stroke="#2e3338" strokeWidth="2.5" strokeLinecap="round" />
-          <line x1="58" y1="54" x2="68" y2="54" stroke="#2e3338" strokeWidth="2.5" strokeLinecap="round" />
+          <path d="M35 50 Q39 47 43 50" stroke="#1c1c1e" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+          <path d="M57 50 Q61 47 65 50" stroke="#1c1c1e" strokeWidth="2.5" strokeLinecap="round" fill="none" />
         </>
       )}
-      {/* Nose */}
-      <ellipse cx="50" cy="63" rx="4" ry="2.5" fill="#e98aa0" stroke="#2e3338" strokeWidth="1.5" />
-      {/* Mouth */}
-      <path d="M44 68 Q50 73 56 68" stroke="#2e3338" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+
+      {/* Nose — small pink button */}
+      <ellipse cx="50" cy="60" rx="3.5" ry="2.5" fill="#e8809a" stroke="#1c1c1e" strokeWidth="1.5" />
+
+      {/* Subtle whiskers */}
+      <line x1="26" y1="61" x2="42" y2="63" stroke="#1c1c1e" strokeWidth="1" strokeLinecap="round" opacity="0.4" />
+      <line x1="26" y1="65" x2="42" y2="65" stroke="#1c1c1e" strokeWidth="1" strokeLinecap="round" opacity="0.4" />
+      <line x1="74" y1="61" x2="58" y2="63" stroke="#1c1c1e" strokeWidth="1" strokeLinecap="round" opacity="0.4" />
+      <line x1="74" y1="65" x2="58" y2="65" stroke="#1c1c1e" strokeWidth="1" strokeLinecap="round" opacity="0.4" />
     </svg>
   );
 }

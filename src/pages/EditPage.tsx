@@ -71,44 +71,41 @@ export default function EditPage() {
   };
 
   return (
-    <div className="min-h-screen bg-paper text-ink">
-      <header className="flex items-center justify-between px-[18px] py-3 border-b border-sky-border bg-paper">
-        <button
-          onClick={() => navigate(-1)}
-          className="w-8 h-8 rounded-full border-2 border-ink bg-white shadow-sticker flex items-center justify-center font-bold active:scale-95 transition-all"
-        >
-          ✕
+    <div className="min-h-screen bg-surface text-ink">
+      <header className="flex items-center justify-between px-[18px] py-3 bg-canvas border-b border-hairline">
+        <button onClick={() => navigate(-1)} className="text-[14px] text-steel font-[500] active:text-ink">
+          ✕ 닫기
         </button>
-        <span className="font-jua text-[21px] text-ink">구문 편집</span>
-        <div className="w-8" />
+        <span className="text-[16px] font-[700] text-ink">구문 편집</span>
+        <div className="w-12" />
       </header>
 
-      <div className="max-w-lg mx-auto px-[18px] py-[14px] pb-[120px] flex flex-col gap-[14px]">
+      <div className="max-w-lg mx-auto px-[18px] py-[16px] pb-[120px] flex flex-col gap-[16px]">
         <Field label="유튜브 영상 링크">
           <input className="input-base" value={youtubeUrl} onChange={(e) => setYoutubeUrl(e.target.value)} />
           {preview ? (
-            <div className="mt-2">
+            <div className="mt-2 rounded-xl overflow-hidden">
               <YoutubeClip videoId={preview.id} start={preview.start} end={endSec ? parseInt(endSec, 10) : undefined} />
             </div>
           ) : (
-            <div className="mt-2 aspect-video w-full rounded-[13px] border-2 border-dashed border-sky-border bg-sky-lite flex items-center justify-center text-[14px] text-muted">
+            <div className="mt-2 aspect-video w-full rounded-xl border border-dashed border-hairline-strong bg-surface flex items-center justify-center text-[13px] text-muted">
               붙여넣으면 미리보기 ✎
             </div>
           )}
         </Field>
 
-        <Field label="구문">
+        <Field label="구문 *">
           <input className="input-base" value={phrase} onChange={(e) => setPhrase(e.target.value)} />
         </Field>
         <Field label="해석">
           <input className="input-base" value={translation} onChange={(e) => setTranslation(e.target.value)} />
         </Field>
         <Field label="상세 설명">
-          <textarea className="input-base resize-none" style={{ minHeight: "58px" }} value={explanation} onChange={(e) => setExplanation(e.target.value)} />
+          <textarea className="input-base resize-none py-3" rows={3} value={explanation} onChange={(e) => setExplanation(e.target.value)} />
         </Field>
 
-        <div className="rounded-[14px] border-2 border-sky-border bg-sky-lite p-4 flex flex-col gap-3">
-          <p className="text-[15px] font-[700] text-ink">예문 · 예문 해석</p>
+        <div className="bg-accent-lite rounded-xl border border-hairline-soft p-4 flex flex-col gap-3">
+          <p className="text-[13px] font-[600] text-accent-deep">예문 · 예문 해석</p>
           <Field label="예문 (영어)">
             <input className="input-base" value={example} onChange={(e) => setExample(e.target.value)} />
           </Field>
@@ -132,17 +129,17 @@ export default function EditPage() {
 
         <button
           onClick={handleDelete}
-          className="w-full py-3 rounded-[24px] border-2 border-rose-400 text-rose-500 font-bold bg-white shadow-sticker active:scale-95 transition-all mt-2"
+          className="w-full py-3 rounded-full border border-[#e0b0b0] text-[#c0392b] text-[14px] font-[500] bg-canvas active:bg-red-50 transition-colors mt-2"
         >
           🗑 삭제
         </button>
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 bg-paper border-t border-sky-border px-[18px] py-4" style={{ paddingBottom: "max(16px, env(safe-area-inset-bottom))" }}>
+      <div className="fixed bottom-0 left-0 right-0 bg-canvas border-t border-hairline px-[18px] py-3" style={{ paddingBottom: "max(12px, env(safe-area-inset-bottom))" }}>
         <button
           onClick={handleSave}
           disabled={!phrase.trim() || saving}
-          className="btn-sky w-full py-4 text-[16px] disabled:opacity-40"
+          className="btn-primary w-full py-3.5 text-[15px] disabled:opacity-40"
         >
           {saving ? "저장 중…" : "저장하기"}
         </button>
@@ -154,7 +151,7 @@ export default function EditPage() {
 function Field({ label, children, className = "" }: { label: string; children: React.ReactNode; className?: string }) {
   return (
     <div className={className}>
-      <label className="block text-[15px] font-[700] text-ink mb-1.5">{label}</label>
+      <label className="block text-[13px] font-[600] text-slate mb-1.5">{label}</label>
       {children}
     </div>
   );

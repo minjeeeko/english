@@ -50,24 +50,37 @@
 }
 
 body {
-  background-color: #f6fbfd;
-  color: #2e3338;
+  background-color: #f7f8fa;
+  color: #1c1c1e;
   font-family: 'Sweet', ui-sans-serif, system-ui, sans-serif;
   overflow-x: hidden;
 }
 
 @layer components {
+  /* Miro-style text input */
   .input-base {
-    @apply w-full bg-white border-2 border-ink rounded-[13px] px-4 py-2.5 text-ink placeholder-[#b8b3a8] focus:outline-none focus:border-sky-key shadow-sticker;
+    @apply w-full bg-canvas border border-hairline-strong rounded-md px-4 py-2.5 text-[16px] text-ink placeholder-muted focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors;
+    height: 44px;
     font-family: 'Sweet', sans-serif;
   }
+  textarea.input-base {
+    height: auto;
+  }
+  /* Miro-style cards */
   .card {
-    @apply bg-white rounded-[16px] border-2 border-ink shadow-sticker;
+    @apply bg-canvas rounded-xl border border-hairline-soft shadow-subtle;
   }
-  .btn-sky {
-    @apply bg-sky-key text-white font-bold rounded-[24px] border-2 border-ink shadow-sticker active:scale-95 transition-all;
+  .card-feature {
+    @apply bg-canvas rounded-xxxl border border-hairline-soft;
   }
-  .btn-white {
-    @apply bg-white text-ink font-bold rounded-[24px] border-2 border-ink shadow-sticker active:scale-95 transition-all;
+  /* Miro-style buttons */
+  .btn-primary {
+    @apply bg-ink text-canvas font-[500] text-[14px] rounded-full px-6 py-3 active:bg-[#2c2c34] transition-colors;
+  }
+  .btn-secondary {
+    @apply bg-transparent text-ink font-[500] text-[14px] rounded-full px-6 py-3 border border-hairline-strong active:bg-surface transition-colors;
+  }
+  .btn-accent {
+    @apply bg-accent text-canvas font-[500] text-[14px] rounded-full px-6 py-3 active:bg-accent-deep transition-colors;
   }
 }
