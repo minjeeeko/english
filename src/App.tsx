@@ -26,6 +26,16 @@ export default function App({ nickname }: { nickname: string }) {
   const { fontSize, toggle: toggleFontSize } = useFontSize();
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const [vvHeight, setVvHeight] = useState<number | null>(null);
+
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const update = () => setVvHeight(vv.height);
+    vv.addEventListener("resize", update);
+    update();
+    return () => vv.removeEventListener("resize", update);
+  }, []);
 
   const fetchEntries = useCallback(async () => {
     setLoading(true);
@@ -99,7 +109,7 @@ export default function App({ nickname }: { nickname: string }) {
     <div
       className="flex flex-col"
       style={{
-        height: "100dvh",
+        height: vvHeight ? `${vvHeight}px` : "100dvh",
         paddingBottom: `calc(${TAB_H}px + env(safe-area-inset-bottom))`,
         background: "#b2c7d9",
       }}
