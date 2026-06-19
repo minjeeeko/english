@@ -114,7 +114,7 @@ export default function App({ nickname }: { nickname: string }) {
       className="flex flex-col"
       style={{
         height: vvHeight ? `${vvHeight}px` : "100dvh",
-        paddingBottom: `calc(${TAB_H}px + env(safe-area-inset-bottom))`,
+        paddingBottom: keyboardOpen ? 0 : `calc(${TAB_H}px + env(safe-area-inset-bottom))`,
         background: "#b2c7d9",
       }}
     >
@@ -309,7 +309,7 @@ export default function App({ nickname }: { nickname: string }) {
       )}
 
       {/* ── TAB BAR ── */}
-      <TabBar tabH={TAB_H} />
+      {!keyboardOpen && <TabBar tabH={TAB_H} />}
     </div>
   );
 }
