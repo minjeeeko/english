@@ -57,7 +57,7 @@ export default function StudyPage() {
           >
             ‹ 뒤로
           </button>
-          <span className="text-[13px] text-muted font-[500]">복습 {entry.review_count}회</span>
+          <span />
         </div>
 
         {/* YouTube */}

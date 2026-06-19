@@ -49,8 +49,6 @@ export default function App() {
 
   const entry = entries[quizIndex] ?? null;
   const total = entries.length;
-  const totalReviews = entries.reduce((sum, e) => sum + e.review_count, 0);
-
   const fs = fontSize === "large";
 
   const handleSend = () => {
@@ -114,9 +112,6 @@ export default function App() {
               <span style={{ fontSize: "10px" }}>가</span>
               <span className="ml-0.5">{fs ? "확대" : "기본"}</span>
             </button>
-            <span className={`text-[#aaa] ${fs ? "text-[13px]" : "text-[11px]"}`}>
-              복습 <span className="text-[#fee500] font-[700]">{totalReviews}</span>회
-            </span>
           </div>
         </div>
         {/* Row 2: date + progress */}

@@ -10,17 +10,23 @@ export default function AllPage() {
   const navigate = useNavigate();
   const [entries, setEntries] = useState<Entry[]>([]);
   const [search, setSearch] = useState("");
-  const [sort, setSort] = useState<"created_at" | "due_date">("created_at");
+  const [tab, setTab] = useState<"recent" | "remembered" | "confused">("recent");
 
   useEffect(() => {
-    listEntries({ sort }).then(setEntries);
-  }, [sort]);
+    listEntries({ sort: "created_at" }).then(setEntries);
+  }, []);
+
+  const byTab = tab === "remembered"
+    ? entries.filter((e) => e.srs_box > 1)
+    : tab === "confused"
+    ? entries.filter((e) => e.srs_box === 1)
+    : entries;
 
   const filtered = search
-    ? entries.filter((e) =>
+    ? byTab.filter((e) =>
         `${e.phrase} ${e.translation ?? ""}`.toLowerCase().includes(search.toLowerCase())
       )
-    : entries;
+    : byTab;
 
   return (
     <div className="min-h-screen bg-surface flex flex-col" style={{ paddingBottom: "calc(48px + env(safe-area-inset-bottom))" }}>
@@ -44,18 +50,22 @@ export default function AllPage() {
           />
         </div>
 
-        {/* Sort — Miro pill-tab style */}
+        {/* Tab — 최근순 / 기억남 / 헷갈림 */}
         <div className="flex gap-2">
-          {(["created_at", "due_date"] as const).map((s) => (
+          {([
+            { key: "recent", label: "최근순" },
+            { key: "remembered", label: "기억남" },
+            { key: "confused", label: "헷갈림" },
+          ] as const).map(({ key, label }) => (
             <button
-              key={s}
-              onClick={() => setSort(s)}
+              key={key}
+              onClick={() => setTab(key)}
               className={`text-[13px] font-[500] px-4 py-1.5 rounded-full border transition-colors
-                ${sort === s
+                ${tab === key
                   ? "bg-ink text-canvas border-ink"
                   : "bg-canvas text-steel border-hairline-strong"}`}
             >
-              {s === "created_at" ? "최근순" : "복습 적은순"}
+              {label}
             </button>
           ))}
         </div>
@@ -121,12 +131,6 @@ function NoteCard({ entry, onStudy, onEdit }: { entry: Entry; onStudy: () => voi
         {entry.translation && (
           <p className="text-[13px] text-muted truncate">{entry.translation}</p>
         )}
-      </div>
-
-      {/* Review count badge — Miro badge style */}
-      <div className="flex flex-col items-center bg-surface rounded-lg px-2.5 py-1 flex-shrink-0 min-w-[40px]">
-        <span className="text-[16px] font-[800] text-accent leading-none">{entry.review_count}</span>
-        <span className="text-[10px] text-muted font-[500]">복습</span>
       </div>
 
       <button

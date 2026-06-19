@@ -22,9 +22,9 @@ export function TabBar({ tabH = 48 }: { tabH?: number }) {
 
 function TabItem({ label, icon, active, onClick }: { label: string; icon: string; active: boolean; onClick: () => void }) {
   return (
-    <button onClick={onClick} className="flex flex-col items-center gap-0.5 px-10">
-      <span className="text-[19px] leading-none">{icon}</span>
-      <span className={`text-[10px] font-[600] tracking-wide ${active ? "text-accent" : "text-steel"}`}>
+    <button onClick={onClick} className="tab-fixed flex flex-col items-center gap-0.5 px-10" style={{ fontSize: "inherit" }}>
+      <span className="tab-fixed leading-none" style={{ fontSize: "19px" }}>{icon}</span>
+      <span className={`tab-fixed font-[600] tracking-wide ${active ? "text-accent" : "text-steel"}`} style={{ fontSize: "10px" }}>
         {label}
       </span>
       {active && <div className="w-3 h-[2px] bg-accent rounded-full" />}
