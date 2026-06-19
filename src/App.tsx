@@ -147,8 +147,35 @@ export default function App({ nickname }: { nickname: string }) {
         </div>
       </header>
 
+      {/* ── PHRASE CARD (pinned, never scrolls away) ── */}
+      {!loading && entry && (
+        <div className="flex-shrink-0 px-3 pt-3 pb-1">
+          <HamBubble fs={fs}>
+            <div
+              className="cursor-pointer active:opacity-80 transition-opacity"
+              onClick={() => navigate(`/study/${entry.id}`, { state: { entry } })}
+            >
+              <p className={`font-[600] text-[#34b3e0] uppercase tracking-wider mb-1.5 ${fs ? "text-[13px]" : "text-[11px]"}`}>
+                오늘의 구문
+              </p>
+              <p className={`font-[800] text-[#1c1c1e] leading-tight ${fs ? "text-[26px]" : "text-[22px]"}`}>
+                {entry.phrase}
+              </p>
+              {entry.translation && (
+                <p className={`text-[#6b6f7e] mt-1 ${fs ? "text-[16px]" : "text-[13px]"}`}>
+                  {entry.translation}
+                </p>
+              )}
+              <p className={`text-[#a5a8b5] mt-2 ${fs ? "text-[13px]" : "text-[11px]"}`}>
+                탭해서 영상으로 학습 →
+              </p>
+            </div>
+          </HamBubble>
+        </div>
+      )}
+
       {/* ── CHAT MESSAGES (scrollable) ── */}
-      <div className="flex-1 overflow-y-auto px-3 py-4 flex flex-col gap-3 min-h-0">
+      <div className="flex-1 overflow-y-auto px-3 py-2 flex flex-col gap-3 min-h-0">
         {loading ? (
           <div className="flex items-center justify-center py-10">
             <span className={`text-white/70 ${fs ? "text-[16px]" : "text-[13px]"}`}>불러오는 중…</span>
@@ -157,37 +184,6 @@ export default function App({ nickname }: { nickname: string }) {
           <EmptyState fs={fs} />
         ) : entry && (
           <>
-            <HamBubble fs={fs}>
-              <p className={`font-[600] text-[#1c1c1e] ${fs ? "text-[17px]" : "text-[14px]"}`}>
-                안녕! 오늘도 한 입 🐾
-              </p>
-              <p className={`text-[#6b6f7e] mt-0.5 ${fs ? "text-[15px]" : "text-[13px]"}`}>
-                이 구문으로 예문을 만들어줘!
-              </p>
-            </HamBubble>
-
-            <HamBubble fs={fs}>
-              <div
-                className="cursor-pointer active:opacity-80 transition-opacity"
-                onClick={() => navigate(`/study/${entry.id}`, { state: { entry } })}
-              >
-                <p className={`font-[600] text-[#34b3e0] uppercase tracking-wider mb-1.5 ${fs ? "text-[13px]" : "text-[11px]"}`}>
-                  오늘의 구문
-                </p>
-                <p className={`font-[800] text-[#1c1c1e] leading-tight ${fs ? "text-[26px]" : "text-[22px]"}`}>
-                  {entry.phrase}
-                </p>
-                {entry.translation && (
-                  <p className={`text-[#6b6f7e] mt-1 ${fs ? "text-[16px]" : "text-[13px]"}`}>
-                    {entry.translation}
-                  </p>
-                )}
-                <p className={`text-[#a5a8b5] mt-2 ${fs ? "text-[13px]" : "text-[11px]"}`}>
-                  탭해서 영상으로 학습 →
-                </p>
-              </div>
-            </HamBubble>
-
             <HamBubble fs={fs}>
               <p className={`text-[#1c1c1e] ${fs ? "text-[16px]" : "text-[14px]"}`}>
                 위 구문을 사용해서 예문을 써봐! 😊
