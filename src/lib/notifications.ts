@@ -55,7 +55,6 @@ async function fireNotification() {
       icon: "/icon-192.png",
       badge: "/icon-192.png",
       tag: "hamglish-study",
-      renotify: true,
     });
   } else {
     new Notification(title, { body, icon: "/icon-192.png" });
