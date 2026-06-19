@@ -64,7 +64,6 @@ body.font-large p,
 body.font-large span:not(.tab-fixed),
 body.font-large button:not(.tab-fixed),
 body.font-large input,
-body.font-large textarea,
 body.font-large label {
   font-size: 1.2em;
 }

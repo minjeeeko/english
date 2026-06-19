@@ -27,11 +27,15 @@ export default function App({ nickname }: { nickname: string }) {
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const [vvHeight, setVvHeight] = useState<number | null>(null);
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
 
   useEffect(() => {
     const vv = window.visualViewport;
     if (!vv) return;
-    const update = () => setVvHeight(vv.height);
+    const update = () => {
+      setVvHeight(vv.height);
+      setKeyboardOpen(vv.height < window.innerHeight * 0.8);
+    };
     vv.addEventListener("resize", update);
     update();
     return () => vv.removeEventListener("resize", update);
@@ -254,7 +258,7 @@ export default function App({ nickname }: { nickname: string }) {
       </div>
 
       {/* ── PREV / NEXT ── */}
-      {!loading && total > 0 && (
+      {!loading && total > 0 && !keyboardOpen && (
         <div className="flex-shrink-0 flex gap-2 px-3 py-2 bg-[#b2c7d9]">
           <button
             onClick={goPrev}
@@ -279,8 +283,8 @@ export default function App({ nickname }: { nickname: string }) {
         >
           <textarea
             ref={inputRef}
-            className={`flex-1 bg-white rounded-[20px] px-4 py-2.5 text-[#1c1c1e] placeholder-[#a5a8b5] resize-none focus:outline-none leading-relaxed ${fs ? "text-[16px]" : "text-[14px]"}`}
-            style={{ minHeight: "40px", maxHeight: "120px", height: "40px" }}
+            className="flex-1 bg-white rounded-[20px] px-4 py-2.5 text-[#1c1c1e] placeholder-[#a5a8b5] resize-none focus:outline-none leading-relaxed"
+            style={{ minHeight: "40px", maxHeight: "120px", height: "40px", fontSize: fs ? "16px" : "14px" }}
             rows={1}
             placeholder="예문을 써보세요…"
             value={inputDraft}
