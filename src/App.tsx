@@ -2,6 +2,8 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { listEntries } from "./lib/entries";
 import type { Entry } from "./lib/entries";
+import { listProgress } from "./lib/progress";
+import type { Progress } from "./lib/progress";
 import { TabBar } from "./components/TabBar";
 import { requestNotificationPermission, scheduleNotifications } from "./lib/notifications";
 import { useFontSize } from "./lib/fontsize";
@@ -10,10 +12,9 @@ function todayStr() {
   return new Date().toLocaleDateString("ko-KR", { month: "long", day: "numeric", weekday: "short" });
 }
 
-// Tab bar height constant — used to compute bottom padding
 const TAB_H = 48;
 
-export default function App() {
+export default function App({ nickname }: { nickname: string }) {
   const navigate = useNavigate();
   const [entries, setEntries] = useState<Entry[]>([]);
   const [quizIndex, setQuizIndex] = useState(0);
@@ -29,12 +30,23 @@ export default function App() {
   const fetchEntries = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await listEntries({ sort: "due_date" });
-      setEntries(data);
+      const [all, prog] = await Promise.all([
+        listEntries({ sort: "created_at" }),
+        listProgress(nickname),
+      ]);
+      const progMap = new Map<string, Progress>(prog.map((p) => [p.entry_id, p]));
+      const today = new Date().toISOString().slice(0, 10);
+      // sort: due today or overdue first, then rest
+      const sorted = [...all].sort((a, b) => {
+        const da = progMap.get(a.id)?.due_date ?? today;
+        const db = progMap.get(b.id)?.due_date ?? today;
+        return da.localeCompare(db);
+      });
+      setEntries(sorted);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [nickname]);
 
   useEffect(() => {
     fetchEntries();

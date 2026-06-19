@@ -1,37 +1,45 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
-import { getEntry, gradeEntry, updateEntry, pickPhrase } from "../lib/entries";
+import { getEntry, listEntries } from "../lib/entries";
 import type { Entry } from "../lib/entries";
+import { listProgress, upsertProgress, calcGrade } from "../lib/progress";
+import type { Progress } from "../lib/progress";
 import { YoutubeClip } from "../components/YoutubeClip";
 import { parseYoutube } from "../lib/youtube";
 
-export default function StudyPage() {
+export default function StudyPage({ nickname }: { nickname: string }) {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const location = useLocation();
   const [entry, setEntry] = useState<Entry | null>((location.state as { entry?: Entry })?.entry ?? null);
+  const [progress, setProgress] = useState<Progress | null>(null);
   const [graded, setGraded] = useState(false);
 
   useEffect(() => {
     if (!id) return;
     setGraded(false);
-    // Fetch in background to get fresh data (e.g. updated review_count)
-    // but don't reset entry to null to avoid flash
     getEntry(id).then((e) => { if (e) setEntry(e); });
-  }, [id]);
+    listProgress(nickname).then((list) => {
+      setProgress(list.find((p) => p.entry_id === id) ?? null);
+    });
+  }, [id, nickname]);
 
   const handleGrade = async (ok: boolean) => {
     if (!entry) return;
-    // review_count increments ONLY here — on explicit grade button press
-    const patch = gradeEntry(entry, ok);
-    const updated = await updateEntry(entry.id, patch);
-    setEntry(updated);
+    const patch = calcGrade(progress, ok);
+    await upsertProgress(nickname, entry.id, patch);
+    setProgress({ nickname, entry_id: entry.id, ...patch });
     setGraded(true);
   };
 
   const handleNext = async () => {
-    const next = await pickPhrase();
+    const [all, prog] = await Promise.all([listEntries({}), listProgress(nickname)]);
+    const progMap = new Map(prog.map((p) => [p.entry_id, p]));
+    const today = new Date().toISOString().slice(0, 10);
+    const due = all.filter((e) => (progMap.get(e.id)?.due_date ?? today) <= today);
+    const pool = due.length > 0 ? due : all;
+    const next = pool[Math.floor(Math.random() * pool.length)];
     if (next) navigate(`/study/${next.id}`, { state: { entry: next } });
     else navigate("/");
   };

@@ -2,24 +2,32 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { listEntries } from "../lib/entries";
 import type { Entry } from "../lib/entries";
+import { listProgress } from "../lib/progress";
+import type { Progress } from "../lib/progress";
 import { parseYoutube } from "../lib/youtube";
 import { HamSVG } from "../components/HamSVG";
 import { TabBar } from "../components/TabBar";
 
-export default function AllPage() {
+export default function AllPage({ nickname }: { nickname: string }) {
   const navigate = useNavigate();
   const [entries, setEntries] = useState<Entry[]>([]);
+  const [progMap, setProgMap] = useState<Map<string, Progress>>(new Map());
   const [search, setSearch] = useState("");
   const [tab, setTab] = useState<"recent" | "remembered" | "confused">("recent");
 
   useEffect(() => {
-    listEntries({ sort: "created_at" }).then(setEntries);
-  }, []);
+    Promise.all([listEntries({ sort: "created_at" }), listProgress(nickname)]).then(
+      ([all, prog]) => {
+        setEntries(all);
+        setProgMap(new Map(prog.map((p) => [p.entry_id, p])));
+      }
+    );
+  }, [nickname]);
 
   const byTab = tab === "remembered"
-    ? entries.filter((e) => e.srs_box > 1)
+    ? entries.filter((e) => (progMap.get(e.id)?.srs_box ?? 1) > 1)
     : tab === "confused"
-    ? entries.filter((e) => e.srs_box === 1)
+    ? entries.filter((e) => (progMap.get(e.id)?.srs_box ?? 1) === 1)
     : entries;
 
   const filtered = search
