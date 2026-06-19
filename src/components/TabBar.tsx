@@ -11,8 +11,7 @@ export function TabBar({ tabH = 48 }: { tabH?: number }) {
     <nav
       className="fixed bottom-0 left-0 right-0 z-30 bg-canvas border-t border-hairline flex items-center justify-around"
       style={{
-        height: tabH,
-        paddingBottom: "env(safe-area-inset-bottom)",
+        height: `calc(${tabH}px + env(safe-area-inset-bottom))`,
       }}
     >
       <TabItem label="홈" icon="🏠" active={isHome} onClick={() => navigate("/")} />

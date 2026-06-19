@@ -1,21 +1,30 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 
 type FontSize = "normal" | "large";
-const FontSizeContext = createContext<{ fontSize: FontSize; toggle: () => void }>({
-  fontSize: "normal",
-  toggle: () => {},
-});
+
+interface FontSizeCtx {
+  fontSize: FontSize;
+  toggle: () => void;
+}
+
+const Ctx = createContext<FontSizeCtx>({ fontSize: "normal", toggle: () => {} });
 
 export function FontSizeProvider({ children }: { children: React.ReactNode }) {
-  const [fontSize, setFontSize] = useState<FontSize>("normal");
+  const [fontSize, setFontSize] = useState<FontSize>(() => {
+    try { return (localStorage.getItem("fontSize") as FontSize) ?? "normal"; }
+    catch { return "normal"; }
+  });
+
+  useEffect(() => {
+    document.body.classList.toggle("font-large", fontSize === "large");
+    try { localStorage.setItem("fontSize", fontSize); } catch {}
+  }, [fontSize]);
+
   const toggle = () => setFontSize((s) => (s === "normal" ? "large" : "normal"));
-  return (
-    <FontSizeContext.Provider value={{ fontSize, toggle }}>
-      <div className={fontSize === "large" ? "text-large" : ""}>{children}</div>
-    </FontSizeContext.Provider>
-  );
+
+  return <Ctx.Provider value={{ fontSize, toggle }}>{children}</Ctx.Provider>;
 }
 
 export function useFontSize() {
-  return useContext(FontSizeContext);
+  return useContext(Ctx);
 }

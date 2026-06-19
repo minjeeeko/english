@@ -4,6 +4,7 @@ import { listEntries } from "./lib/entries";
 import type { Entry } from "./lib/entries";
 import { TabBar } from "./components/TabBar";
 import { requestNotificationPermission, scheduleNotifications } from "./lib/notifications";
+import { useFontSize } from "./lib/fontsize";
 
 function todayStr() {
   return new Date().toLocaleDateString("ko-KR", { month: "long", day: "numeric", weekday: "short" });
@@ -21,14 +22,9 @@ export default function App() {
   const [userAnswer, setUserAnswer] = useState("");
   const [inputDraft, setInputDraft] = useState("");
   const [loading, setLoading] = useState(true);
-  const [largeFontMode, setLargeFontMode] = useState(false);
+  const { fontSize, toggle: toggleFontSize } = useFontSize();
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
-
-  // Apply / remove large-font class on <body>
-  useEffect(() => {
-    document.body.classList.toggle("font-large", largeFontMode);
-  }, [largeFontMode]);
 
   const fetchEntries = useCallback(async () => {
     setLoading(true);
@@ -55,7 +51,7 @@ export default function App() {
   const total = entries.length;
   const totalReviews = entries.reduce((sum, e) => sum + e.review_count, 0);
 
-  const fs = largeFontMode;
+  const fs = fontSize === "large";
 
   const handleSend = () => {
     if (!inputDraft.trim()) return;
@@ -94,6 +90,7 @@ export default function App() {
       className="flex flex-col"
       style={{
         height: "100dvh",
+        paddingBottom: `calc(${TAB_H}px + env(safe-area-inset-bottom))`,
         background: "#b2c7d9",
       }}
     >
@@ -107,15 +104,15 @@ export default function App() {
           <div className="flex items-center gap-2">
             {/* Font size toggle */}
             <button
-              onClick={() => setLargeFontMode((v) => !v)}
+              onClick={toggleFontSize}
               className={`flex items-center gap-1 px-2.5 py-1 rounded-full border text-[11px] font-[600] transition-colors
-                ${largeFontMode
+                ${fs
                   ? "bg-[#fee500] border-[#fee500] text-[#1c1c1e]"
                   : "bg-transparent border-[#666] text-[#aaa]"}`}
             >
               <span style={{ fontSize: "13px" }}>가</span>
               <span style={{ fontSize: "10px" }}>가</span>
-              <span className="ml-0.5">{largeFontMode ? "확대" : "기본"}</span>
+              <span className="ml-0.5">{fs ? "확대" : "기본"}</span>
             </button>
             <span className={`text-[#aaa] ${fs ? "text-[13px]" : "text-[11px]"}`}>
               복습 <span className="text-[#fee500] font-[700]">{totalReviews}</span>회
