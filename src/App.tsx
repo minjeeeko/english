@@ -27,19 +27,18 @@ export default function App({ nickname }: { nickname: string }) {
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const [vvHeight, setVvHeight] = useState<number | null>(null);
-  const [keyboardOpen, setKeyboardOpen] = useState(false);
 
   useEffect(() => {
     const vv = window.visualViewport;
     if (!vv) return;
-    const update = () => {
-      setVvHeight(vv.height);
-      setKeyboardOpen(vv.height < window.innerHeight * 0.8);
-    };
+    const update = () => setVvHeight(vv.height);
     vv.addEventListener("resize", update);
     update();
     return () => vv.removeEventListener("resize", update);
   }, []);
+
+  const keyboardHeight = vvHeight != null ? Math.max(0, window.innerHeight - vvHeight) : 0;
+  const keyboardOpen = keyboardHeight > 100;
 
   const fetchEntries = useCallback(async () => {
     setLoading(true);
@@ -113,8 +112,10 @@ export default function App({ nickname }: { nickname: string }) {
     <div
       className="flex flex-col"
       style={{
-        height: vvHeight ? `${vvHeight}px` : "100dvh",
-        paddingBottom: keyboardOpen ? 0 : `calc(${TAB_H}px + env(safe-area-inset-bottom))`,
+        height: "100dvh",
+        paddingBottom: keyboardOpen
+          ? `${keyboardHeight + 56}px`
+          : `calc(${TAB_H + 56}px + env(safe-area-inset-bottom))`,
         background: "#b2c7d9",
       }}
     >
@@ -275,11 +276,19 @@ export default function App({ nickname }: { nickname: string }) {
         </div>
       )}
 
-      {/* ── CHAT INPUT BAR ── */}
+      {/* ── CHAT INPUT BAR (fixed, always above keyboard/tabbar) ── */}
       {!loading && total > 0 && (
         <div
-          className="flex-shrink-0 bg-[#f0f0f0] border-t border-[#d0d0d0] px-3 py-2 flex items-end gap-2"
-          style={{ paddingBottom: `max(8px, env(safe-area-inset-bottom))` }}
+          className="bg-[#f0f0f0] border-t border-[#d0d0d0] px-3 py-2 flex items-end gap-2 z-20"
+          style={{
+            position: "fixed",
+            left: 0,
+            right: 0,
+            bottom: keyboardOpen
+              ? `${keyboardHeight}px`
+              : `calc(${TAB_H}px + env(safe-area-inset-bottom))`,
+            paddingBottom: keyboardOpen ? "8px" : `max(8px, env(safe-area-inset-bottom))`,
+          }}
         >
           <textarea
             ref={inputRef}
@@ -294,6 +303,12 @@ export default function App({ nickname }: { nickname: string }) {
               e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`;
             }}
             onKeyDown={handleKeyDown}
+            onFocus={() => {
+              setTimeout(() => {
+                const vv = window.visualViewport;
+                if (vv) setVvHeight(vv.height);
+              }, 300);
+            }}
           />
           <button
             onClick={handleSend}
